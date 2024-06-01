@@ -22,7 +22,7 @@ class Player:
 
 class ChessVar:
     def __init__(self):
-        self._all_game_states = ['UNFINISHED', 'WHITE WON', 'BLACK WON']
+        self._all_game_states = ['UNFINISHED', 'WHITE_WON', 'BLACK_WON']
         self._game_state = self._all_game_states[0]
         self._board = {
             1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
