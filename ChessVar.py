@@ -158,10 +158,12 @@ class ChessVar:
             self.remove_pieces_around_explosion(place_sq)
             self.move_piece(move_piece, init_sq, place_sq)
             self.set_turn()
-            print('Turn Success Board:', self.print_board())
+            print('Turn Success Board:')
+            self.print_board()
             return move_valid
         # Return false if move is not legal:
-        print('Turn Fail Board:', self.print_board())
+        print('Turn Fail Board:')
+        self.print_board()
         return move_valid
 
     def print_board(self):
@@ -351,7 +353,7 @@ class ChessVar:
                                 return True
                 return False
             if player_turn == 'b':
-                for row in range(init_row - 1, init_row - 2):
+                for row in range(init_row - 1, init_row):
                     for col in range(col_lower, col_upper + 1):
                         # First row, 3 consecutive cols (one on each side of init col):
                         if col in range(col_lower + 1, col_upper):
@@ -364,10 +366,13 @@ class ChessVar:
 
 # board = ChessVar()
 # # print(board.get_turn())
-# print(board.set_turn())
+# # print(board.set_turn())
 # # print(board.get_game_state())
 # # print(board.get_turn())
-# board.print_board()
+# # board.print_board()
 # # print('Get Piece on Board:', board.get_piece('C8'))
-# print(board.make_move('b7', 'b5'))
-# board.print_board()
+# print(board.make_move('a2', 'a4'))
+# # board.print_board()
+# print(board.make_move('g7', 'g5'))
+# print(board.make_move('a4', 'a5'))
+# print(board.make_move('g5', 'g4'))
