@@ -373,7 +373,7 @@ class ChessVar:
         return False
 
 
-board = ChessVar()
+# board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
