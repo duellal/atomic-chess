@@ -26,10 +26,10 @@ class ChessVar:
         self._game_state = self._all_game_states[0]
         self._board = {
             1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
-            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': '', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': ''},
             3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': 'w-p', 'g': '', 'h': ''},
             4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
-            5: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': 'w-p', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
             8: {'a': 'b-r', 'b': 'b-kn', 'c': 'b-b', 'd': 'b-kg', 'e': 'b-q', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
@@ -109,8 +109,8 @@ class ChessVar:
         player_turn = self.get_turn()
         move_valid = None
 
-        # print('Move piece?', move_piece)
-        # print('Player Turn?', player_turn)
+        print('Move piece?', move_piece)
+        print('Player Turn?', player_turn)
 
     # Cases to return false:
         # If the square is empty:
@@ -126,25 +126,25 @@ class ChessVar:
     # If no case for the piece return false, else continue to see if move is legal:
         match move_piece[-1]:
             case 'p':
-                # print('Pawn')
+                print('Pawn')
                 move_valid = self.check_pawn_move(player_turn, init_sq, place_sq)
             case 'b':
-                # print('Bishop')
+                print('Bishop')
                 pass
             case 'r':
-                # print('Rook')
+                print('Rook')
                 pass
             case 'n':
-                # print('Knight')
+                print('Knight')
                 pass
             case 'q':
-                # print('Queen')
+                print('Queen')
                 pass
             case 'g':
-                # print('King')
+                print('King')
                 pass
             case _:
-                # print('No Matching Piece')
+                print('No Matching Piece')
                 return False
         # If move is legal:
         #   Remove exploded + captured pieces
@@ -165,7 +165,9 @@ class ChessVar:
         Prints the current state of the board.
         :return: dictionary of dictionaries
         """
-        return print(self._board)
+        board_rows = []
+        for row in range(1, len(self._board) + 1):
+            print(f'{row}: {self._board[row]}')
 
     def set_turn(self):
         """
@@ -355,12 +357,12 @@ class ChessVar:
         return False
 
 
-# board = ChessVar()
-# # print(board.get_turn())
-# # print(board.set_turn())
-# # print(board.get_game_state())
-# # print(board.get_turn())
-# board.print_board()
-# # print('Get Piece on Board:', board.get_piece('C8'))
-# print(board.make_move('d2', 'f4'))
-# board.print_board()
+board = ChessVar()
+# print(board.get_turn())
+print(board.set_turn())
+# print(board.get_game_state())
+# print(board.get_turn())
+board.print_board()
+# print('Get Piece on Board:', board.get_piece('C8'))
+print(board.make_move('b7', 'b5'))
+board.print_board()
