@@ -3,22 +3,6 @@
 # Date:
 # Description: Creates a ChessVar class with methods to play a game of atomic chess.
 
-class Player:
-    """
-    Initializes a player for the atomic chess game. The player must pick a color between white and black. Both
-    players cannot be the same color in order to play against each other.
-    """
-
-    def __init__(self, color):
-        self._color = color
-
-    def get_color(self):
-        """
-        Gets the player’s chess piece color.
-        :return: string - color
-        """
-        return self._color
-
 
 class ChessVar:
     def __init__(self):
