@@ -83,7 +83,7 @@ class ChessVar:
         print('Init Square:', init_sq)
         print('Place Square:', place_sq)
 
-    # Cases to return false:
+        # Cases to return false:
         # If the square is empty:
         if move_piece is None:
             return False
@@ -94,7 +94,7 @@ class ChessVar:
         elif self.get_game_state() is not self._all_game_states[0]:
             return False
 
-    # If no case for the piece return false, else continue to see if move is legal:
+        # If no case for the piece return false, else continue to see if move is legal:
         match move_piece[-1]:
             case 'p':
                 print('Pawn')
@@ -296,13 +296,25 @@ class ChessVar:
                 for col in range(col_lower, col_upper + 1):
                     # First row, 3 consecutive cols (one on each side of init col):
                     if row == 3 and col in range(col_lower + 1, col_upper):
-                        poss_moves.append(f'{self._alph_tuple[col]}{row}')
-                        if f'{self._alph_tuple[col]}{row}' == place_sq:
+                        # Pawn moves straight with no captures:
+                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
+                            self._alph_tuple[col]] == '':
+                            return True
+                        # Pawn moves diagonal with capture:
+                        #   Pawn cannot move diagonally normally
+                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
+                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
                             return True
                     # Second row, only pass cols 2 squares over fom init col:
                     if row == 4 and ((0 < col_lower == col) or (8 > col_upper == col) or (col == init_col_num)):
-                        poss_moves.append(f'{self._alph_tuple[col]}{row}')
-                        if f'{self._alph_tuple[col]}{row}' == place_sq:
+                        # Pawn moves straight with no captures:
+                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
+                            self._alph_tuple[col]] == '':
+                            return True
+                        # Pawn moves diagonal with capture:
+                        #   Pawn cannot move diagonally normally
+                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
+                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
                             return True
             return False
         if player_turn == 'b' and init_row == 7:
@@ -310,13 +322,25 @@ class ChessVar:
                 for col in range(col_lower, col_upper + 1):
                     # First row, 3 consecutive cols (one on each side of init col):
                     if row == 6 and col in range(col_lower + 1, col_upper):
-                        poss_moves.append(f'{self._alph_tuple[col]}{row}')
-                        if f'{self._alph_tuple[col]}{row}' == place_sq:
+                        # Pawn moves straight with no captures:
+                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
+                            self._alph_tuple[col]] == '':
+                            return True
+                        # Pawn moves diagonal with capture:
+                        #   Pawn cannot move diagonally normally
+                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
+                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
                             return True
                     # Second row, only pass cols 2 squares over fom init col:
                     if row == 5 and ((0 < col_lower == col) or (8 > col_upper == col) or (col == init_col_num)):
-                        poss_moves.append(f'{self._alph_tuple[col]}{row}')
-                        if f'{self._alph_tuple[col]}{row}' == place_sq:
+                        # Pawn moves straight with no captures:
+                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
+                            self._alph_tuple[col]] == '':
+                            return True
+                        # Pawn moves diagonal with capture:
+                        #   Pawn cannot move diagonally normally
+                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
+                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
                             return True
             return False
         # If pawn is not in initial row, pawn can move only 1 square
@@ -326,8 +350,14 @@ class ChessVar:
                     for col in range(col_lower, col_upper + 1):
                         # First row, 3 consecutive cols (one on each side of init col):
                         if col in range(col_lower + 1, col_upper):
-                            poss_moves.append(f'{self._alph_tuple[col]}{row}')
-                            if f'{self._alph_tuple[col]}{row}' == place_sq:
+                            # Pawn moves straight with no captures:
+                            if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
+                                self._alph_tuple[col]] == '':
+                                return True
+                            # Pawn moves diagonal with capture:
+                            #   Pawn cannot move diagonally normally
+                            elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
+                                self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
                                 return True
                 return False
             if player_turn == 'b':
@@ -335,8 +365,12 @@ class ChessVar:
                     for col in range(col_lower, col_upper + 1):
                         # First row, 3 consecutive cols (one on each side of init col):
                         if col in range(col_lower + 1, col_upper):
-                            poss_moves.append(f'{self._alph_tuple[col]}{row}')
-                            if f'{self._alph_tuple[col]}{row}' == place_sq:
+                            # Pawn moves straight with no captures:
+                            if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][self._alph_tuple[col]] == '':
+                                return True
+                            # Pawn moves diagonal with capture:
+                            #   Pawn cannot move diagonally normally
+                            elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
                                 return True
                 return False
         return False
@@ -360,3 +394,7 @@ class ChessVar:
 # print(board.make_move('a7', 'a6'))
 # print(board.make_move('a4', 'a5'))
 # print(board.make_move('a6', 'a5'))
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('b7', 'b6'))
+# print(board.make_move('a4', 'a5'))
+# print(board.make_move('b6', 'a5'))
