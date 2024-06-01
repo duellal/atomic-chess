@@ -357,12 +357,12 @@ class ChessVar:
         return False
 
 
-board = ChessVar()
-# print(board.get_turn())
-print(board.set_turn())
-# print(board.get_game_state())
-# print(board.get_turn())
-board.print_board()
-# print('Get Piece on Board:', board.get_piece('C8'))
-print(board.make_move('b7', 'b5'))
-board.print_board()
+# board = ChessVar()
+# # print(board.get_turn())
+# print(board.set_turn())
+# # print(board.get_game_state())
+# # print(board.get_turn())
+# board.print_board()
+# # print('Get Piece on Board:', board.get_piece('C8'))
+# print(board.make_move('b7', 'b5'))
+# board.print_board()
