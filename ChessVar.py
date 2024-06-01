@@ -36,37 +36,6 @@ class ChessVar:
         }
         self._turn = True
         self._alph_tuple = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
-        # Piece Moves dictionary:
-        # self._piece_moves = {
-        #     'kg': {
-        #         'num_sq': [1],
-        #         'dir': 'any'
-        #     },
-        #     'q': {
-        #         'num_sq': [7],
-        #         'dir': '+'
-        #     },
-        #     'b': {
-        #         'num_sq': [7],
-        #         'dir': 'x'
-        #     },
-        #     'kn': {
-        #         # Total moves per turn
-        #         #     2 moves in a + dir, then 1 move right angle
-        #         'num_sq': [2, 1],
-        #         'dir': ['+', 'r']
-        #     },
-        #     'r': {
-        #         'num_sq': [7],
-        #         'dir': '+'
-        #     },
-        #     'p': {
-        #         # 1st move - up to 2 squares
-        #         # 2nd move + onward - up to 1 square
-        #         'num_sq': [2, 1],
-        #         'dir': 'w'
-        #     }
-        # }
 
     def get_game_state(self):
         """
