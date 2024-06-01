@@ -410,7 +410,7 @@ class ChessVar:
 # # print(board.make_move('a5', 'a6'))
 # # print(board.make_move('g4', 'g3'))
 # # print(board.make_move('a6', 'b7'))
-#
+# #
 # # # Submission Test #5
 # print('[1] Game State:', board.get_game_state())
 # print(board.make_move('a2', 'a4'))
