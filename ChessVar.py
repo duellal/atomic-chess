@@ -32,7 +32,7 @@ class ChessVar:
             5: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
-            8: {'a': 'b-r', 'b': 'b-kn', 'c': 'b-b', 'd': 'b-kg', 'e': 'b-q', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+            8: {'a': 'b-r', 'b': 'b-kn', 'c': 'b-b', 'd': 'b-kq', 'e': 'b-kg', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
         }
         self._turn = True
         self._alph_tuple = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
@@ -375,26 +375,53 @@ class ChessVar:
                 return False
         return False
 
-
+#
 # board = ChessVar()
-# print(board.get_turn())
-# print(board.set_turn())
-# print(board.get_game_state())
-# print(board.get_turn())
-# board.print_board()
-# print('Get Piece on Board:', board.get_piece('C8'))
-
+# # print(board.get_turn())
+# # print(board.set_turn())
+# # print(board.get_game_state())
+# # print(board.get_turn())
+# # board.print_board()
+# # print('Get Piece on Board:', board.get_piece('C8'))
+#
+# # board.print_board()
+#
+# # # Submission Test #2
+# # print(board.make_move('a2', 'a4'))
+# # print(board.make_move('a7', 'a6'))
+# # print(board.make_move('a4', 'a5'))
+# # print(board.make_move('a6', 'a5'))
+# # print(board.make_move('a6', 'b6'))
+# # print(board.make_move('a6', 'a7'))
+# # print(board.make_move('b7', 'a6'))
+#
+# # # Submission Test #3
+# # print(board.make_move('a2', 'a4'))
+# # print(board.make_move('a7', 'a6'))
+# # print(board.make_move('a4', 'a5'))
+# # print(board.make_move('b7', 'b6'))
+# # print(board.make_move('a5', 'b6'))
+#
+# # # Submission Test #4
+# # print(board.make_move('a2', 'a4'))
+# # print(board.make_move('g7', 'g5'))
+# # print(board.make_move('a4', 'a5'))
+# # print(board.make_move('g5', 'g4'))
+# # print(board.make_move('a5', 'a6'))
+# # print(board.make_move('g4', 'g3'))
+# # print(board.make_move('a6', 'b7'))
+#
+# # # Submission Test #5
+# print('[1] Game State:', board.get_game_state())
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('a4', 'a5'))
 # print(board.make_move('g5', 'g4'))
-# board.print_board()
-
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('a7', 'a6'))
-# print(board.make_move('a4', 'a5'))
-# print(board.make_move('a6', 'a5'))
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('b7', 'b6'))
-# print(board.make_move('a4', 'a5'))
-# print(board.make_move('b6', 'a5'))
+# print(board.make_move('a5', 'a6'))
+# print('[2] Game State:', board.get_game_state())
+# print(board.make_move('g4', 'g3'))
+# print('[3] Game State:', board.get_game_state())
+# print(board.make_move('a6', 'b7'))
+# print('[4] Game State:', board.get_game_state())
+# print(board.make_move('g3', 'f2'))
+# print('[5] Game State:', board.get_game_state())
