@@ -109,8 +109,11 @@ class ChessVar:
         player_turn = self.get_turn()
         move_valid = None
 
-        print('Move piece?', move_piece)
-        print('Player Turn?', player_turn)
+        print('Player Turn:', player_turn)
+        print('Move piece:', move_piece)
+        print('Init Square:', init_sq)
+        print('Place Square:', place_sq)
+
 
     # Cases to return false:
         # If the square is empty:
@@ -155,8 +158,10 @@ class ChessVar:
             self.remove_pieces_around_explosion(place_sq)
             self.move_piece(move_piece, init_sq, place_sq)
             self.set_turn()
+            print('Turn Success Board:', self.print_board())
             return move_valid
         # Return false if move is not legal:
+        print('Turn Fail Board:', self.print_board())
         return move_valid
 
     def print_board(self):
