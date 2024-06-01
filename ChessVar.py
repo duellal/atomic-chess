@@ -114,7 +114,6 @@ class ChessVar:
         print('Init Square:', init_sq)
         print('Place Square:', place_sq)
 
-
     # Cases to return false:
         # If the square is empty:
         if move_piece is None:
@@ -155,8 +154,8 @@ class ChessVar:
         #   Set the turn as the next player's
         #   Return Boolean
         if move_valid:
-            self.remove_pieces_around_explosion(place_sq)
-            self.move_piece(move_piece, init_sq, place_sq)
+            explosion = self.remove_pieces_around_explosion(place_sq)
+            self.move_piece(move_piece, explosion, init_sq, place_sq)
             self.set_turn()
             print('Turn Success Board:')
             self.print_board()
@@ -212,19 +211,29 @@ class ChessVar:
         # Catch all:
         return None
 
-    def move_piece(self, move_piece, init_sq, place_sq):
+    def move_piece(self, move_piece, explosion, init_sq, place_sq):
         """
         [DONE]
+        :param explosion:
         :param move_piece:
         :param init_sq:
         :param place_sq:
         :return:
         """
+        print('Explosion?', explosion)
         init_col = init_sq[0].lower()
         init_row = int(init_sq[1])
 
         place_col = place_sq[0].lower()
         place_row = int(place_sq[1])
+
+        # If a pawn causes an explosion, remove the pawn
+        if explosion and 'p' in move_piece:
+            print('INIT:', self._board[init_row][init_col])
+            print('PLACE:', self._board[place_row][place_col])
+            self._board[init_row][init_col] = ''
+            self._board[place_row][place_col] = ''
+            return
 
         self._board[init_row][init_col] = ''
         self._board[place_row][place_col] = move_piece
@@ -297,7 +306,7 @@ class ChessVar:
             # Remove all other pieces:
             self._board[sq_row][sq_col] = ''
 
-        return True
+        return exploded_pieces
 
     def check_pawn_move(self, player_turn, init_sq, place_sq):
         poss_moves = []
@@ -364,15 +373,21 @@ class ChessVar:
         return False
 
 
-# board = ChessVar()
-# # print(board.get_turn())
-# # print(board.set_turn())
-# # print(board.get_game_state())
-# # print(board.get_turn())
-# # board.print_board()
-# # print('Get Piece on Board:', board.get_piece('C8'))
+board = ChessVar()
+# print(board.get_turn())
+# print(board.set_turn())
+# print(board.get_game_state())
+# print(board.get_turn())
+# board.print_board()
+# print('Get Piece on Board:', board.get_piece('C8'))
+
 # print(board.make_move('a2', 'a4'))
-# # board.print_board()
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('a4', 'a5'))
 # print(board.make_move('g5', 'g4'))
+# board.print_board()
+
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('a7', 'a6'))
+# print(board.make_move('a4', 'a5'))
+# print(board.make_move('a6', 'a5'))
