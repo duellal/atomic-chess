@@ -87,7 +87,7 @@ class ChessVar:
 
         # Cases to return false:
         # If the square is empty:
-        if move_piece is None:
+        if move_piece == '':
             return False
         # If the chess piece is not the current player's:
         elif player_turn not in move_piece:
@@ -537,8 +537,13 @@ board = ChessVar()
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('c5', 'c3'))
 
-# # Submission Test #6
-# print('SUB TEST 6')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('h7', 'h5'))
-# print(board.make_move('a1', 'a5'))
+# Submission Test #6
+print('SUB TEST 6')
+print(board.make_move('a2', 'a4'))
+print(board.make_move('h7', 'h5'))
+# White Move
+print(board.make_move('a1', 'a5'))
+print(board.make_move('a1', 'a3'))
+# Black Move
+print(board.make_move('h8', 'f6'))
+print(board.make_move('h8', 'g6'))
