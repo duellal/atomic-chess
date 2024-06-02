@@ -3,6 +3,22 @@
 # Date:
 # Description: Creates a ChessVar class with methods to play a game of atomic chess.
 
+class Player:
+    """
+    Initializes a player for the atomic chess game. The player must pick a color between white and black. Both
+    players cannot be the same color in order to play against each other.
+    """
+
+    def __init__(self, color):
+        self._color = color
+
+    def get_color(self):
+        """
+        Gets the player’s chess piece color.
+        :return: string - color
+        """
+        return self._color
+
 
 class ChessVar:
     def __init__(self):
@@ -11,7 +27,7 @@ class ChessVar:
         self._board = {
             1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
             2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
-            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': 'w-p', 'g': '', 'h': ''},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             5: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
             6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
@@ -59,6 +75,7 @@ class ChessVar:
         :return: boolean
         """
         move_piece = self.get_piece(init_sq)
+        place_sq_piece = self.get_piece(place_sq)
         player_turn = self.get_turn()
         move_valid = None
 
@@ -66,6 +83,7 @@ class ChessVar:
         print('Move piece:', move_piece)
         print('Init Square:', init_sq)
         print('Place Square:', place_sq)
+        print('Place Piece:', place_sq_piece)
 
         # Cases to return false:
         # If the square is empty:
@@ -73,6 +91,9 @@ class ChessVar:
             return False
         # If the chess piece is not the current player's:
         elif player_turn not in move_piece:
+            return False
+        # Can't capture your own piece:
+        elif player_turn in place_sq_piece:
             return False
         # If the game is not unfinished (someone has won):
         elif self.get_game_state() is not self._all_game_states[0]:
@@ -88,6 +109,7 @@ class ChessVar:
                 pass
             case 'r':
                 print('Rook')
+                move_valid = self.check_rook_move(init_sq, place_sq)
                 pass
             case 'n':
                 print('Knight')
@@ -101,13 +123,17 @@ class ChessVar:
             case _:
                 print('No Matching Piece')
                 return False
+
         # If move is legal:
         #   Remove exploded + captured pieces
         #   Move the initial piece to the placement square
         #   Set the turn as the next player's
         #   Return Boolean
         if move_valid:
-            explosion = self.remove_pieces_around_explosion(place_sq)
+            explosion = None
+            if move_valid and place_sq_piece:
+                explosion = self.remove_pieces_around_explosion(place_sq)
+
             self.move_piece(move_piece, explosion, init_sq, place_sq)
             self.set_turn()
             print('Turn Success Board:')
@@ -152,17 +178,12 @@ class ChessVar:
         Gets the piece on the board if there is one at the given location.
         :param pos: string - denotes location on chess board; ex: "C4" or "c4"
         :return: None or string
-            - None: if there is no piece in that location
-            - String: the piece acronym at that location
+            - String: the piece acronym at that location or ''
         """
         p_row = int(pos[1])
         p_col = pos[0].lower()
         # Actual square at position:
-        true_sq = self._board[p_row][p_col]
-        if len(true_sq) >= 3:
-            return true_sq
-        # Catch all:
-        return None
+        return self._board[p_row][p_col]
 
     def move_piece(self, move_piece, explosion, init_sq, place_sq):
         """
@@ -173,7 +194,6 @@ class ChessVar:
         :param place_sq:
         :return:
         """
-        print('Explosion?', explosion)
         init_col = init_sq[0].lower()
         init_row = int(init_sq[1])
 
@@ -182,8 +202,6 @@ class ChessVar:
 
         # If a pawn causes an explosion, remove the pawn
         if explosion and 'p' in move_piece:
-            print('INIT:', self._board[init_row][init_col])
-            print('PLACE:', self._board[place_row][place_col])
             self._board[init_row][init_col] = ''
             self._board[place_row][place_col] = ''
             return
@@ -262,7 +280,15 @@ class ChessVar:
         return exploded_pieces
 
     def check_pawn_move(self, player_turn, init_sq, place_sq):
-        poss_moves = []
+        """
+        [DONE] - Need to add description
+        Pawn moves forward 1, unless 1st move, then can move forward 1 or 2 squares.
+        Pawn captures forward 1 diagonally
+        :param player_turn:
+        :param init_sq:
+        :param place_sq:
+        :return:
+        """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
         init_col_num = self.get_col_num_helper(init_col)
@@ -281,24 +307,31 @@ class ChessVar:
                     # First row, 3 consecutive cols (one on each side of init col):
                     if row == 3 and col in range(col_lower + 1, col_upper):
                         # Pawn moves straight with no captures:
-                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
-                            self._alph_tuple[col]] == '':
+                        if (f'{self._alph_tuple[col]}{row}' == place_sq
+                                and col == init_col_num
+                                and self._board[row][self._alph_tuple[col]] == ''):
                             return True
                         # Pawn moves diagonal with capture:
                         #   Pawn cannot move diagonally normally
-                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
-                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
+                        elif (f'{self._alph_tuple[col]}{row}' == place_sq
+                              and self._board[row][self._alph_tuple[col]] != ''
+                              and self._alph_tuple[col] != init_col):
                             return True
                     # Second row, only pass cols 2 squares over fom init col:
-                    if row == 4 and ((0 < col_lower == col) or (8 > col_upper == col) or (col == init_col_num)):
+                    if (row == 4
+                            and ((0 < col_lower == col)
+                                 or (8 > col_upper == col)
+                                 or (col == init_col_num))):
                         # Pawn moves straight with no captures:
-                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
-                            self._alph_tuple[col]] == '':
+                        if (f'{self._alph_tuple[col]}{row}' == place_sq
+                                and col == init_col_num
+                                and self._board[row][self._alph_tuple[col]] == ''):
                             return True
                         # Pawn moves diagonal with capture:
                         #   Pawn cannot move diagonally normally
-                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
-                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
+                        elif (f'{self._alph_tuple[col]}{row}' == place_sq
+                              and self._board[row][self._alph_tuple[col]] != ''
+                              and self._alph_tuple[col] != init_col):
                             return True
             return False
         if player_turn == 'b' and init_row == 7:
@@ -307,24 +340,31 @@ class ChessVar:
                     # First row, 3 consecutive cols (one on each side of init col):
                     if row == 6 and col in range(col_lower + 1, col_upper):
                         # Pawn moves straight with no captures:
-                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
-                            self._alph_tuple[col]] == '':
+                        if (f'{self._alph_tuple[col]}{row}' == place_sq
+                                and col == init_col_num
+                                and self._board[row][self._alph_tuple[col]] == ''):
                             return True
                         # Pawn moves diagonal with capture:
                         #   Pawn cannot move diagonally normally
-                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
-                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
+                        elif (f'{self._alph_tuple[col]}{row}' == place_sq
+                              and self._board[row][self._alph_tuple[col]] != ''
+                              and self._alph_tuple[col] != init_col):
                             return True
                     # Second row, only pass cols 2 squares over fom init col:
-                    if row == 5 and ((0 < col_lower == col) or (8 > col_upper == col) or (col == init_col_num)):
+                    if (row == 5
+                            and ((0 < col_lower == col)
+                                 or (8 > col_upper == col)
+                                 or (col == init_col_num))):
                         # Pawn moves straight with no captures:
-                        if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
-                            self._alph_tuple[col]] == '':
+                        if (f'{self._alph_tuple[col]}{row}' == place_sq
+                                and col == init_col_num
+                                and self._board[row][self._alph_tuple[col]] == ''):
                             return True
                         # Pawn moves diagonal with capture:
                         #   Pawn cannot move diagonally normally
-                        elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
-                            self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
+                        elif (f'{self._alph_tuple[col]}{row}' == place_sq
+                              and self._board[row][self._alph_tuple[col]] != ''
+                              and self._alph_tuple[col] != init_col):
                             return True
             return False
         # If pawn is not in initial row, pawn can move only 1 square
@@ -335,13 +375,15 @@ class ChessVar:
                         # First row, 3 consecutive cols (one on each side of init col):
                         if col in range(col_lower + 1, col_upper):
                             # Pawn moves straight with no captures:
-                            if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][
-                                self._alph_tuple[col]] == '':
+                            if (f'{self._alph_tuple[col]}{row}' == place_sq
+                                    and col == init_col_num
+                                    and self._board[row][self._alph_tuple[col]] == ''):
                                 return True
                             # Pawn moves diagonal with capture:
                             #   Pawn cannot move diagonally normally
-                            elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][
-                                self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
+                            elif (f'{self._alph_tuple[col]}{row}' == place_sq
+                                  and self._board[row][self._alph_tuple[col]] != ''
+                                  and self._alph_tuple[col] != init_col):
                                 return True
                 return False
             if player_turn == 'b':
@@ -350,17 +392,82 @@ class ChessVar:
                         # First row, 3 consecutive cols (one on each side of init col):
                         if col in range(col_lower + 1, col_upper):
                             # Pawn moves straight with no captures:
-                            if f'{self._alph_tuple[col]}{row}' == place_sq and col == init_col_num and self._board[row][self._alph_tuple[col]] == '':
+                            if (f'{self._alph_tuple[col]}{row}' == place_sq
+                                    and col == init_col_num
+                                    and self._board[row][self._alph_tuple[col]] == ''):
                                 return True
                             # Pawn moves diagonal with capture:
                             #   Pawn cannot move diagonally normally
-                            elif f'{self._alph_tuple[col]}{row}' == place_sq and self._board[row][self._alph_tuple[col]] != '' and self._alph_tuple[col] != init_col:
+                            elif (f'{self._alph_tuple[col]}{row}' == place_sq
+                                  and self._board[row][self._alph_tuple[col]] != ''
+                                  and self._alph_tuple[col] != init_col):
                                 return True
                 return False
         return False
 
+    def check_rook_move(self, init_sq, place_sq):
+        """
+        Rook moves forward or back in any direction any number of squares.
+        Cannot jump pieces - has to stop at end of board or at another piece
+        :param init_sq:
+        :param place_sq:
+        :return:
+        """
+        init_row = int(init_sq[1])
+        init_col = init_sq[0].lower()
+        init_col_num = self.get_col_num_helper(init_col)
+
+        place_row = int(place_sq[1])
+        place_col = place_sq[0].lower()
+        place_col_num = self.get_col_num_helper(place_col)
+
+        # Going horizontally (columns):
+        if init_row == place_row:
+            if init_col_num < place_col_num:
+                for col in range(init_col_num + 1, place_col_num + 1):
+                    # If there is a piece in the way of the placement square:
+                    if (self._board[init_row][self._alph_tuple[col]] != ''
+                            and f'{self._alph_tuple[col]}{init_row}' != place_sq):
+                        return False
+                return True
+
+            if init_col_num > place_col_num:
+                for col in range(place_col_num, init_col_num):
+                    print('Col:', col)
+                    # If there is a piece in the way of the placement square:
+                    if (self._board[init_row][self._alph_tuple[col]] != ''
+                            and f'{self._alph_tuple[col]}{init_row}' != place_sq):
+                        return False
+                return True
+
+            # If not in bounds:
+            return False
+        # Going vertically (rows):
+        elif init_col == place_col:
+            if init_row < place_row:
+                for row in range(init_row + 1, place_row + 1):
+                    # If there is a piece in the way of the placement square:
+                    if (self._board[row][init_col] != ''
+                            and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
+                        return False
+                return True
+            elif init_row > place_row:
+                for row in range(place_row, init_row):
+                    # If there is a piece in the way of the placement square:
+                    if (self._board[row][self._alph_tuple[init_col_num]] != ''
+                            and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
+                        return False
+                return True
+
+            # If not in bounds:
+            return False
+        # If going diagonally or any other square outside the "t":
+        else:
+            return False
+
+
 #
-# board = ChessVar()
+board = ChessVar()
 # # print(board.get_turn())
 # # print(board.set_turn())
 # # print(board.get_game_state())
@@ -369,24 +476,28 @@ class ChessVar:
 # # print('Get Piece on Board:', board.get_piece('C8'))
 #
 # # board.print_board()
-#
-# # # Submission Test #2
-# # print(board.make_move('a2', 'a4'))
-# # print(board.make_move('a7', 'a6'))
-# # print(board.make_move('a4', 'a5'))
-# # print(board.make_move('a6', 'a5'))
-# # print(board.make_move('a6', 'b6'))
-# # print(board.make_move('a6', 'a7'))
-# # print(board.make_move('b7', 'a6'))
-#
-# # # Submission Test #3
-# # print(board.make_move('a2', 'a4'))
-# # print(board.make_move('a7', 'a6'))
-# # print(board.make_move('a4', 'a5'))
-# # print(board.make_move('b7', 'b6'))
-# # print(board.make_move('a5', 'b6'))
-#
+
+# Submission Test #2
+# print('SUB TEST 2')
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('a7', 'a6'))
+# print(board.make_move('a4', 'a5'))
+# print(board.make_move('a6', 'a5'))
+# print(board.make_move('a6', 'b5'))
+# print(board.make_move('a6', 'a6'))
+# print(board.make_move('a6', 'a7'))
+# print(board.make_move('b7', 'b6'))
+
+# # Submission Test #3
+# print('SUB TEST 3')
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('a7', 'a6'))
+# print(board.make_move('a4', 'a5'))
+# print(board.make_move('b7', 'b6'))
+# print(board.make_move('a5', 'b6'))
+
 # # # Submission Test #4
+# print('SUB TEST 4')
 # # print(board.make_move('a2', 'a4'))
 # # print(board.make_move('g7', 'g5'))
 # # print(board.make_move('a4', 'a5'))
@@ -396,6 +507,7 @@ class ChessVar:
 # # print(board.make_move('a6', 'b7'))
 # #
 # # # Submission Test #5
+# print('SUB TEST 5')
 # print('[1] Game State:', board.get_game_state())
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('g7', 'g5'))
@@ -409,3 +521,24 @@ class ChessVar:
 # print('[4] Game State:', board.get_game_state())
 # print(board.make_move('g3', 'f2'))
 # print('[5] Game State:', board.get_game_state())
+
+# # My Test for Rook:
+# print('MY TEST ROOK')
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('h7', 'h5'))
+# print(board.make_move('a1', 'a3'))
+# print(board.make_move('f7', 'f6'))
+# print('PLayer turn:', board.get_turn())
+# print(board.make_move('a3', 'e3'))
+# print(board.make_move('f6', 'f5'))
+# print(board.make_move('e3', 'e5'))
+# print(board.make_move('f5', 'f4'))
+# print(board.make_move('e5', 'c5'))
+# print(board.make_move('g7', 'g5'))
+# print(board.make_move('c5', 'c3'))
+
+# # Submission Test #6
+# print('SUB TEST 6')
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('h7', 'h5'))
+# print(board.make_move('a1', 'a5'))
