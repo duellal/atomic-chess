@@ -467,7 +467,7 @@ class ChessVar:
 
 
 #
-board = ChessVar()
+# board = ChessVar()
 # # print(board.get_turn())
 # # print(board.set_turn())
 # # print(board.get_game_state())
@@ -537,13 +537,13 @@ board = ChessVar()
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('c5', 'c3'))
 
-# Submission Test #6
-print('SUB TEST 6')
-print(board.make_move('a2', 'a4'))
-print(board.make_move('h7', 'h5'))
-# White Move
-print(board.make_move('a1', 'a5'))
-print(board.make_move('a1', 'a3'))
-# Black Move
-print(board.make_move('h8', 'f6'))
-print(board.make_move('h8', 'g6'))
+# # Submission Test #6
+# print('SUB TEST 6')
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('h7', 'h5'))
+# # White Move
+# print(board.make_move('a1', 'a5'))
+# print(board.make_move('a1', 'a3'))
+# # Black Move
+# print(board.make_move('h8', 'f6'))
+# print(board.make_move('h8', 'g6'))
