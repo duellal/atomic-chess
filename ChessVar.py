@@ -142,11 +142,7 @@ class ChessVar:
                     return False
             case 'g':
                 print('King')
-                checkmate = self.check_checkmate(self.check_king_move, init_sq)
-                if checkmate is False:
-                    move_valid = self.check_king_move(init_sq, place_sq)
-                else:
-                    return False
+                move_valid = self.check_king_move(init_sq, place_sq)
             case _:
                 print('No Matching Piece')
                 return False
@@ -563,7 +559,7 @@ class ChessVar:
         :param place_sq:
         :return:
         """
-        if next_sq_col == 0 or next_sq_row == 0 or next_sq_col > 7 or 7 < next_sq_row:
+        if next_sq_col < 0 or next_sq_row < 0 or next_sq_col > 7 or 7 < next_sq_row:
             return False
 
         # Going back in columns + rows:
@@ -623,38 +619,18 @@ class ChessVar:
         checkmate = True
 
         if self.get_turn() == 'w':
-            king_pos = self._white_king
-            king_row = int(king_pos[1])
-            king_col = king_pos[0].lower()
-            king_col_num = self.get_col_num_helper(king_col)
-
-            for row in range(king_row - 1, king_row + 2):
-                if 0 < row < 8:
-                    for col in range(king_col_num - 1, king_col_num + 2):
-                        # If king can move to an empty space or a space with another player's piece
-                        # AND the next move the current players turn is can checkmate
-                        print(f'Col Row: {self._alph_tuple[col]}{row}')
-                        if ((self._board[row][self._alph_tuple[col]] == ''
-                                or self.get_turn() in self._board[row][self._alph_tuple[col]])
-                                and check_next_piece_move(piece_pos, f'{self._alph_tuple[col]}{row}') is False):
-                            return no_checkmate
-            return checkmate
-        else:
             king_pos = self._black_king
-            king_row = int(king_pos[1])
-            king_col = king_pos[0].lower()
-            king_col_num = self.get_col_num_helper(king_col)
 
-            for row in range(king_row - 1, king_row + 2):
-                if 0 < row < 8:
-                    for col in range(king_col_num - 1, king_col_num + 2):
-                        # If king can move to an empty space or a space with another player's piece
-                        # AND the next move the current players turn is can checkmate
-                        if ((self._board[row][self._alph_tuple[col]] == ''
-                             or self.get_turn() in self._board[row][self._alph_tuple[col]])
-                                and check_next_piece_move(piece_pos, f'{self._alph_tuple[col]}{row}') is False):
-                            return no_checkmate
-            return checkmate
+            if check_next_piece_move(piece_pos, king_pos):
+                return checkmate
+            else:
+                return no_checkmate
+        else:
+            king_pos = self._white_king
+            if check_next_piece_move(piece_pos, king_pos):
+                return checkmate
+            else:
+                return no_checkmate
 
     def get_king_pos(self, player_turn):
         """
@@ -666,7 +642,6 @@ class ChessVar:
             return self._white_king
         else:
             return self._black_king
-
 
 
 # board = ChessVar()
