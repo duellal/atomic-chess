@@ -107,6 +107,7 @@ class ChessVar:
                 move_valid = self.check_pawn_move(player_turn, init_sq, place_sq)
             case 'b':
                 print('Bishop')
+                move_valid = self.check_bishop_move(init_sq, place_sq)
                 pass
             case 'r':
                 print('Rook')
@@ -120,7 +121,7 @@ class ChessVar:
                 pass
             case 'g':
                 print('King')
-                move_valid = self.check_king_move(player_turn, init_sq, place_sq)
+                move_valid = self.check_king_move(init_sq, place_sq)
                 pass
             case _:
                 print('No Matching Piece')
@@ -467,9 +468,9 @@ class ChessVar:
         else:
             return False
 
-    def check_king_move(self, player_turn, init_sq, place_sq):
+    def check_king_move(self, init_sq, place_sq):
         """
-
+        [DONE]
         :param init_sq:
         :param place_sq:
         :return:
@@ -480,25 +481,119 @@ class ChessVar:
 
         for row in range(init_row - 1, init_row + 2):
             for col in range(init_col_num - 1, init_col_num + 2):
-                print('King Loop - Col Row:', f'{self._alph_tuple[col]}{row}')
                 if place_sq == f'{self._alph_tuple[col]}{row}':
                     return True
         return False
 
+    def check_bishop_move(self, init_sq, place_sq):
+        init_row = int(init_sq[1])
+        init_col = init_sq[0].lower()
+        init_col_num = self.get_col_num_helper(init_col)
 
+        place_row = int(place_sq[1])
+        place_col = place_sq[0].lower()
+        place_col_num = self.get_col_num_helper(place_col)
+
+        # Diagonal Up - Increase Row, Increase Col (Left Up):
+        if init_row < place_row:
+            if init_col_num < place_col_num:
+                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row + 1, place_sq)
+            # Increase Row, Decrease Col (Right Up):
+            elif init_col_num > place_col_num:
+                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row + 1, place_sq)
+            # Col is the same:
+            else:
+                return False
+        # Diagonal Down - Decrease row, Decrease Col (Left Down):
+        elif init_row > place_row:
+            if init_col_num < place_col_num:
+                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row - 1, place_sq)
+            # Decrease Row, Increase Col (Right Down):
+            elif init_col_num > place_col_num:
+                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row - 1, place_sq)
+            # Col is the same:
+            else:
+                return False
+        # Row is the same as the initial square:
+        return False
+
+# If there is a piece in the way of the placement square:
+#             elif init_row > place_row:
+#                 for row in range(place_row, init_row):
+#                     if (self._board[row][self._alph_tuple[init_col_num]] != ''
+#                             and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
+#                         return False
 #
+
+    def bishop_recursion_helper(self, init_sq_col, init_sq_row, next_sq_col, next_sq_row, place_sq):
+        # Going back in columns + rows:
+        if next_sq_col + 1 == init_sq_col:
+            if next_sq_row + 1 == init_sq_row:
+                # If there is a piece in the way of the placement square:
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
+                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq):
+                    return False
+                # If at the placement square, return True:
+                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                    return True
+                # If not at the placement square continue:
+                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1, place_sq)
+
+        # Going back in columns, going forward in rows:
+            elif init_sq_row == next_sq_row - 1:
+                # If there is a piece in the way of the placement square:
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
+                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq):
+                    return False
+                # If at the placement square, return True:
+                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                    return True
+                # If not at the placement square continue:
+                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1, place_sq)
+
+        # Going forward in columns, going backward in rows:
+        if init_sq_col == next_sq_col - 1:
+            if next_sq_row + 1 == init_sq_row:
+                # If there is a piece in the way of the placement square:
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
+                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq
+                ):
+                    return False
+                # If at the placement square, return True:
+                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                    return True
+                # If not at the placement square continue:
+                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1, place_sq)
+
+        # Going forward in both columns and rows:
+            elif init_sq_row == next_sq_row - 1:
+                # If there is a piece in the way of the placement square:
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
+                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq
+                ):
+                    return False
+                # If at the placement square, return True:
+                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                    return True
+                # If not at the placement square continue:
+                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
+
+
 # board = ChessVar()
-# # print(board.get_turn())
-# # print(board.set_turn())
-# # print(board.get_game_state())
-# # print(board.get_turn())
-# # board.print_board()
-# # print('Get Piece on Board:', board.get_piece('C8'))
-#
-# # board.print_board()
+# print(board.get_turn())
+# print(board.set_turn())
+# print(board.get_game_state())
+# print(board.get_turn())
+# board.print_board()
+# print('Get Piece on Board:', board.get_piece('C8'))
 
-# Submission Test #2 - Pawn Moves Without Capture
-# print('SUB TEST 2 \nPawn Moves Without Capture')
+# board.print_board()
+
+# # [PASS] Submission Test #1 - Create game, test pawn moves, game state + turns
+#
+# # [PASS] Submission Test #2 - Pawn Moves Without Capture
+# print('SUB TEST 2 - Pawn Moves Without Capture')
+# print('---------------------------------------')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('a7', 'a6'))
 # print(board.make_move('a4', 'a5'))
@@ -507,17 +602,19 @@ class ChessVar:
 # print(board.make_move('a6', 'a6'))
 # print(board.make_move('a6', 'a7'))
 # print(board.make_move('b7', 'b6'))
-
-# # Submission Test #3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion
-# print('SUB TEST 3 \nPawn Captures Pawn, No Other Pieces Affected By Explosion')
+#
+# # [PASS] Submission Test #3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion
+# print('SUB TEST 3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion')
+# print('----------------------------------------------------------------------')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('a7', 'a6'))
 # print(board.make_move('a4', 'a5'))
 # print(board.make_move('b7', 'b6'))
 # print(board.make_move('a5', 'b6'))
-
-# # # Submission Test #4 - Pawn captures pawn with explosion removing proper pieces
-# print('SUB TEST 4 \nPawn captures pawn with explosion removing proper pieces')
+#
+# # [PASS] Submission Test #4 - Pawn captures pawn with explosion removing proper pieces
+# print('SUB TEST 4 - Pawn captures pawn with explosion removing proper pieces')
+# print('---------------------------------------------------------------------')
 # # print(board.make_move('a2', 'a4'))
 # # print(board.make_move('g7', 'g5'))
 # # print(board.make_move('a4', 'a5'))
@@ -526,8 +623,9 @@ class ChessVar:
 # # print(board.make_move('g4', 'g3'))
 # # print(board.make_move('a6', 'b7'))
 # #
-# # # Submission Test #5 - Pawn Capture Pawn and Kills King, Game End
-# print('SUB TEST 5 \nPawn Capture Pawn and Kills King, Game End')
+# # [PASS] Submission Test #5 - Pawn Capture Pawn and Kills King, Game End
+# print('SUB TEST 5 - Pawn Capture Pawn and Kills King, Game End')
+# print('-------------------------------------------------------')
 # print('[1] Game State:', board.get_game_state())
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('g7', 'g5'))
@@ -541,9 +639,10 @@ class ChessVar:
 # print('[4] Game State:', board.get_game_state())
 # print(board.make_move('g3', 'f2'))
 # print('[5] Game State:', board.get_game_state())
-
-# # My Test for Rook:
+#
+# # [PASS] My Test for Rook:
 # print('MY TEST ROOK')
+# print('------------')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('h7', 'h5'))
 # print(board.make_move('a1', 'a3'))
@@ -556,9 +655,10 @@ class ChessVar:
 # print(board.make_move('e5', 'c5'))
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('c5', 'c3'))
-
-# # Submission Test #6 - Rook + Pawn Movements with Rook Capture
-# print('SUB TEST 6 \nRook + Pawn Movements with Rook Capture')
+#
+# # [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
+# print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
+# print('----------------------------------------------------')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('h7', 'h5'))
 # # White Move
@@ -567,27 +667,32 @@ class ChessVar:
 # # Black Move
 # print(board.make_move('h8', 'f6'))
 # print(board.make_move('h8', 'g6'))
-
-# # Submission Test #7 - Knight Movement
-# print('SUB TEST 7 \nKnight Movement')
+#
+# # [] Submission Test #7 - Knight Movement
+# print('SUB TEST 7 - Knight Movement')
+# print('----------------------------')
 # print(board.make_move('b1', 'c3))
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
-
-# # Submission Test #8 - Bishop Movement with Captures
-# print('SUB TEST 8 \nBishop Movement with Captures')
+#
+# # [] Submission Test #8 - Bishop Movement with Captures
+# print('SUB TEST 8 - Bishop Movement with Captures')
+# print('------------------------------------------')
 # print(board.make_move('d2', 'd4'))
 # print(board.make_move('e7', 'e5'))
+# print(board.make_move('b2', 'b3'))
+# print(board.make_move('h7', 'h6'))
 # print(board.make_move('c1', 'a3'))
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
-
-# # Submission Test #9 - Queen Movement with Captures + End of Game
-# print('SUB TEST 9 \nQueen Movement with Captures + End of Game')
+#
+# # [] Submission Test #9 - Queen Movement with Captures + End of Game
+# print('SUB TEST 9 - Queen Movement with Captures + End of Game')
+# print('-------------------------------------------------------')
 # print(board.make_move('e2', 'e4'))
 # print(board.make_move('d7', 'd5'))
 # print(board.make_move('d1', 'd4'))
@@ -595,8 +700,9 @@ class ChessVar:
 # print(board.make_move())
 # print(board.make_move())
 
-# Submission Test #10 - King Movement
-# print('SUB TEST 10 \nKing Movement')
+# # [PASS] Submission Test #10 - King Movement
+# print('SUB TEST 10 - King Movement')
+# print('---------------------------')
 # print(board.make_move('e2', 'e4'))
 # print(board.make_move('e7', 'e5'))
 # print(board.make_move('e1', 'e3'))
@@ -605,3 +711,6 @@ class ChessVar:
 # print(board.make_move('e8', 'd7'))
 # print(board.make_move('e8', 'e7'))
 # print(board.make_move('e2', 'f3'))
+# # End their test, start of my test for backwards motion
+# print(board.make_move('c7', 'c6'))
+# print(board.make_move('f3', 'e1'))
