@@ -91,6 +91,7 @@ class ChessVar:
             return False
         # If the chess piece is not the current player's:
         elif player_turn not in move_piece:
+            print('HERE')
             return False
         # Can't capture your own piece:
         elif player_turn in place_sq_piece:
@@ -119,7 +120,7 @@ class ChessVar:
                 pass
             case 'g':
                 print('King')
-                move_valid = self.check_king_move(init_sq, place_sq)
+                move_valid = self.check_king_move(player_turn, init_sq, place_sq)
                 pass
             case _:
                 print('No Matching Piece')
@@ -466,7 +467,7 @@ class ChessVar:
         else:
             return False
 
-    def check_king_move(self, init_sq, place_sq):
+    def check_king_move(self, player_turn, init_sq, place_sq):
         """
 
         :param init_sq:
@@ -478,10 +479,10 @@ class ChessVar:
         init_col_num = self.get_col_num_helper(init_col)
 
         for row in range(init_row - 1, init_row + 2):
-            for col in range(init_col_num - 2, init_col_num + 1):
+            for col in range(init_col_num - 1, init_col_num + 2):
+                print('King Loop - Col Row:', f'{self._alph_tuple[col]}{row}')
                 if place_sq == f'{self._alph_tuple[col]}{row}':
                     return True
-
         return False
 
 
@@ -598,10 +599,9 @@ class ChessVar:
 # print('SUB TEST 10 \nKing Movement')
 # print(board.make_move('e2', 'e4'))
 # print(board.make_move('e7', 'e5'))
+# print(board.make_move('e1', 'e3'))
+# print(board.make_move('e1', 'f1'))
 # print(board.make_move('e1', 'e2'))
-
-
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
+# print(board.make_move('e8', 'd7'))
+# print(board.make_move('e8', 'e7'))
+# print(board.make_move('e2', 'f3'))
