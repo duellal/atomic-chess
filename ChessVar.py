@@ -504,28 +504,30 @@ class ChessVar:
             # Col is the same:
             else:
                 return False
+
         # Diagonal Down - Decrease row, Decrease Col (Left Down):
         elif init_row > place_row:
             if init_col_num < place_col_num:
-                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row - 1, place_sq)
+                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row - 1, place_sq)
             # Decrease Row, Increase Col (Right Down):
             elif init_col_num > place_col_num:
-                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row - 1, place_sq)
+                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row - 1, place_sq)
             # Col is the same:
             else:
                 return False
         # Row is the same as the initial square:
         return False
 
-# If there is a piece in the way of the placement square:
-#             elif init_row > place_row:
-#                 for row in range(place_row, init_row):
-#                     if (self._board[row][self._alph_tuple[init_col_num]] != ''
-#                             and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
-#                         return False
-#
-
     def bishop_recursion_helper(self, init_sq_col, init_sq_row, next_sq_col, next_sq_row, place_sq):
+        """
+        []
+        :param init_sq_col:
+        :param init_sq_row:
+        :param next_sq_col:
+        :param next_sq_row:
+        :param place_sq:
+        :return:
+        """
         # Going back in columns + rows:
         if next_sq_col + 1 == init_sq_col:
             if next_sq_row + 1 == init_sq_row:
@@ -683,12 +685,12 @@ class ChessVar:
 # print('------------------------------------------')
 # print(board.make_move('d2', 'd4'))
 # print(board.make_move('e7', 'e5'))
-# print(board.make_move('b2', 'b3'))
-# print(board.make_move('h7', 'h6'))
 # print(board.make_move('c1', 'a3'))
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
+# print(board.make_move('c1', 'h6'))  # RU
+# print(board.make_move('f8', 'c5'))  # LD
+# print(board.make_move('h6', 'g7'))  # LU
+# print(board.make_move('c5', 'd4'))  # RD
+
 #
 # # [] Submission Test #9 - Queen Movement with Captures + End of Game
 # print('SUB TEST 9 - Queen Movement with Captures + End of Game')
