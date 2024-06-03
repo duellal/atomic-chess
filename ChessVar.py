@@ -451,7 +451,7 @@ class ChessVar:
 
         # Going horizontally (columns):
         if init_row == place_row:
-            if init_col_num < place_col_num:
+            if place_col_num > init_col_num >= 0:
                 for col in range(init_col_num + 1, place_col_num + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -459,7 +459,7 @@ class ChessVar:
                         return False
                 return True
 
-            if init_col_num > place_col_num:
+            if 8 >= init_col_num > place_col_num:
                 for col in range(place_col_num, init_col_num):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -471,14 +471,14 @@ class ChessVar:
             return False
         # Going vertically (rows):
         elif init_col == place_col:
-            if init_row < place_row:
+            if 0 <= init_row < place_row:
                 for row in range(init_row + 1, place_row + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][init_col] != ''
                             and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
                         return False
                 return True
-            elif init_row > place_row:
+            elif 8 >= init_row > place_row:
                 for row in range(place_row, init_row):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][self._alph_tuple[init_col_num]] != ''
