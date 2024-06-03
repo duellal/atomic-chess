@@ -120,9 +120,9 @@ class ChessVar:
                 print('Queen')
                 bishop_pass = self.check_bishop_move(init_sq, place_sq)
                 rook_pass = self.check_rook_move(init_sq, place_sq)
-                if bishop_pass and rook_pass:
-                    return True
-                pass
+
+                if bishop_pass or rook_pass:
+                    move_valid = True
             case 'g':
                 print('King')
                 move_valid = self.check_king_move(init_sq, place_sq)
