@@ -591,7 +591,7 @@ class ChessVar:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
 
 
-board = ChessVar()
+# board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -703,11 +703,11 @@ board = ChessVar()
 
 #
 # # [] Submission Test #9 - Queen Movement with Captures + End of Game
-print('SUB TEST 9 - Queen Movement with Captures + End of Game')
-print('-------------------------------------------------------')
-print(board.make_move('e2', 'e4'))
-print(board.make_move('d7', 'd5'))
-print(board.make_move('d1', 'd4'))
+# print('SUB TEST 9 - Queen Movement with Captures + End of Game')
+# print('-------------------------------------------------------')
+# print(board.make_move('e2', 'e4'))
+# print(board.make_move('d7', 'd5'))
+# print(board.make_move('d1', 'd4'))
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
