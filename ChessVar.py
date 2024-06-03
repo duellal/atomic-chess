@@ -77,7 +77,7 @@ class ChessVar:
         move_piece = self.get_piece(init_sq)
         place_sq_piece = self.get_piece(place_sq)
         player_turn = self.get_turn()
-        move_valid = None
+        move_valid = False
 
         print('Player Turn:', player_turn)
         print('Move piece:', move_piece)
@@ -118,6 +118,10 @@ class ChessVar:
                 pass
             case 'q':
                 print('Queen')
+                bishop_pass = self.check_bishop_move(init_sq, place_sq)
+                rook_pass = self.check_rook_move(init_sq, place_sq)
+                if bishop_pass and rook_pass:
+                    return True
                 pass
             case 'g':
                 print('King')
@@ -486,6 +490,12 @@ class ChessVar:
         return False
 
     def check_bishop_move(self, init_sq, place_sq):
+        """
+        [DONE]
+        :param init_sq:
+        :param place_sq:
+        :return:
+        """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
         init_col_num = self.get_col_num_helper(init_col)
@@ -520,7 +530,7 @@ class ChessVar:
 
     def bishop_recursion_helper(self, init_sq_col, init_sq_row, next_sq_col, next_sq_row, place_sq):
         """
-        []
+        [DONE]
         :param init_sq_col:
         :param init_sq_row:
         :param next_sq_col:
@@ -581,7 +591,7 @@ class ChessVar:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -693,11 +703,11 @@ class ChessVar:
 
 #
 # # [] Submission Test #9 - Queen Movement with Captures + End of Game
-# print('SUB TEST 9 - Queen Movement with Captures + End of Game')
-# print('-------------------------------------------------------')
-# print(board.make_move('e2', 'e4'))
-# print(board.make_move('d7', 'd5'))
-# print(board.make_move('d1', 'd4'))
+print('SUB TEST 9 - Queen Movement with Captures + End of Game')
+print('-------------------------------------------------------')
+print(board.make_move('e2', 'e4'))
+print(board.make_move('d7', 'd5'))
+print(board.make_move('d1', 'd4'))
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
