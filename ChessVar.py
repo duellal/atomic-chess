@@ -132,13 +132,9 @@ class ChessVar:
                 print('Queen')
                 checkmate_bishop = self.check_checkmate(self.check_bishop_move, init_sq)
                 checkmate_rook = self.check_checkmate(self.check_rook_move, init_sq)
-                print('QUEEN - Checkmate Bishop:', checkmate_bishop)
-                print('QUEEN - Checkmate Rook:', checkmate_rook)
                 if checkmate_bishop is False and checkmate_rook is False:
                     bishop_pass = self.check_bishop_move(init_sq, place_sq)
                     rook_pass = self.check_rook_move(init_sq, place_sq)
-                    print('QUEEN - Bishop Pass:', bishop_pass)
-                    print('QUEEN - Rook Pass:', rook_pass)
 
                     if bishop_pass or rook_pass:
                         move_valid = True
@@ -455,7 +451,7 @@ class ChessVar:
 
         # Going horizontally (columns):
         if init_row == place_row:
-            if init_col_num < place_col_num:
+            if 0 <= init_col_num < place_col_num:
                 for col in range(init_col_num + 1, place_col_num + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -463,9 +459,8 @@ class ChessVar:
                         return False
                 return True
 
-            if init_col_num > place_col_num:
+            if 8 > init_col_num > place_col_num:
                 for col in range(place_col_num, init_col_num):
-                    print('Col:', col)
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
                             and f'{self._alph_tuple[col]}{init_row}' != place_sq):
@@ -476,14 +471,14 @@ class ChessVar:
             return False
         # Going vertically (rows):
         elif init_col == place_col:
-            if init_row < place_row:
+            if 0 <= init_row < place_row:
                 for row in range(init_row + 1, place_row + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][init_col] != ''
                             and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
                         return False
                 return True
-            elif init_row > place_row:
+            elif 8 > init_row > place_row:
                 for row in range(place_row, init_row):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][self._alph_tuple[init_col_num]] != ''
@@ -528,9 +523,6 @@ class ChessVar:
         place_row = int(place_sq[1])
         place_col = place_sq[0].lower()
         place_col_num = self.get_col_num_helper(place_col)
-
-        print('BISHOP Init Sq:', init_sq)
-        print('BISHOP Place Sq:', place_sq)
 
         # Diagonal Up - Increase Row, Increase Col (Left Up):
         if init_row < place_row:
@@ -656,7 +648,7 @@ class ChessVar:
             return self._black_king
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -734,16 +726,16 @@ class ChessVar:
 # print(board.make_move('c5', 'c3'))
 #
 # # [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
-# print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
-# print('----------------------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('h7', 'h5'))
-# # White Move
-# print(board.make_move('a1', 'a5'))
-# print(board.make_move('a1', 'a3'))
-# # Black Move
-# print(board.make_move('h8', 'f6'))
-# print(board.make_move('h8', 'g6'))
+print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
+print('----------------------------------------------------')
+print(board.make_move('a2', 'a4'))
+print(board.make_move('h7', 'h5'))
+# White Move
+print(board.make_move('a1', 'a5'))
+print(board.make_move('a1', 'a3'))
+# Black Move
+print(board.make_move('h8', 'f6'))
+print(board.make_move('h8', 'g6'))
 #
 # # [] Submission Test #7 - Knight Movement
 # print('SUB TEST 7 - Knight Movement')
@@ -755,7 +747,7 @@ class ChessVar:
 # print(board.make_move())
 # print(board.make_move())
 #
-# # [] Submission Test #8 - Bishop Movement with Captures
+# # [DONE] Submission Test #8 - Bishop Movement with Captures
 # print('SUB TEST 8 - Bishop Movement with Captures')
 # print('------------------------------------------')
 # print(board.make_move('d2', 'd4'))
@@ -767,7 +759,7 @@ class ChessVar:
 # print(board.make_move('c5', 'd4'))  # RD
 
 #
-# # [] Submission Test #9 - Queen Movement with Captures + End of Game
+# # [DONE] Submission Test #9 - Queen Movement with Captures + End of Game
 # print('SUB TEST 9 - Queen Movement with Captures + End of Game')
 # print('-------------------------------------------------------')
 # print(board.make_move('e2', 'e4'))
@@ -779,6 +771,8 @@ class ChessVar:
 # print(board.make_move('g4', 'c8'))
 # print(board.make_move('d6', 'b4'))
 # print(board.make_move('c8', 'c7'))
+# print(board.make_move('f2', 'f3'))
+# print(board.make_move('b4', 'd2'))
 
 
 # # [PASS] Submission Test #10 - King Movement
