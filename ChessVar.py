@@ -451,7 +451,7 @@ class ChessVar:
 
         # Going horizontally (columns):
         if init_row == place_row:
-            if 0 <= init_col_num < place_col_num:
+            if init_col_num < place_col_num:
                 for col in range(init_col_num + 1, place_col_num + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -459,7 +459,7 @@ class ChessVar:
                         return False
                 return True
 
-            if 8 > init_col_num > place_col_num:
+            if init_col_num > place_col_num:
                 for col in range(place_col_num, init_col_num):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -471,14 +471,14 @@ class ChessVar:
             return False
         # Going vertically (rows):
         elif init_col == place_col:
-            if 0 <= init_row < place_row:
+            if init_row < place_row:
                 for row in range(init_row + 1, place_row + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][init_col] != ''
                             and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
                         return False
                 return True
-            elif 8 > init_row > place_row:
+            elif init_row > place_row:
                 for row in range(place_row, init_row):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][self._alph_tuple[init_col_num]] != ''
@@ -648,7 +648,7 @@ class ChessVar:
             return self._black_king
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -726,16 +726,16 @@ class ChessVar:
 # print(board.make_move('c5', 'c3'))
 #
 # # [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
-# print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
-# print('----------------------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('h7', 'h5'))
-# # White Move
-# print(board.make_move('a1', 'a5'))
-# print(board.make_move('a1', 'a3'))
-# # Black Move
-# print(board.make_move('h8', 'f6'))
-# print(board.make_move('h8', 'g6'))
+print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
+print('----------------------------------------------------')
+print(board.make_move('a2', 'a4'))
+print(board.make_move('h7', 'h5'))
+# White Move
+print(board.make_move('a1', 'a5'))
+print(board.make_move('a1', 'a3'))
+# Black Move
+print(board.make_move('h8', 'f6'))
+print(board.make_move('h8', 'g6'))
 #
 # # [] Submission Test #7 - Knight Movement
 # print('SUB TEST 7 - Knight Movement')
