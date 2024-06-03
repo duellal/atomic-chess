@@ -119,6 +119,7 @@ class ChessVar:
                 pass
             case 'g':
                 print('King')
+                move_valid = self.check_king_move(init_sq, place_sq)
                 pass
             case _:
                 print('No Matching Piece')
@@ -465,6 +466,24 @@ class ChessVar:
         else:
             return False
 
+    def check_king_move(self, init_sq, place_sq):
+        """
+
+        :param init_sq:
+        :param place_sq:
+        :return:
+        """
+        init_row = int(init_sq[1])
+        init_col = init_sq[0].lower()
+        init_col_num = self.get_col_num_helper(init_col)
+
+        for row in range(init_row - 1, init_row + 2):
+            for col in range(init_col_num - 2, init_col_num + 1):
+                if place_sq == f'{self._alph_tuple[col]}{row}':
+                    return True
+
+        return False
+
 
 #
 # board = ChessVar()
@@ -477,8 +496,8 @@ class ChessVar:
 #
 # # board.print_board()
 
-# Submission Test #2
-# print('SUB TEST 2')
+# Submission Test #2 - Pawn Moves Without Capture
+# print('SUB TEST 2 \nPawn Moves Without Capture')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('a7', 'a6'))
 # print(board.make_move('a4', 'a5'))
@@ -488,16 +507,16 @@ class ChessVar:
 # print(board.make_move('a6', 'a7'))
 # print(board.make_move('b7', 'b6'))
 
-# # Submission Test #3
-# print('SUB TEST 3')
+# # Submission Test #3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion
+# print('SUB TEST 3 \nPawn Captures Pawn, No Other Pieces Affected By Explosion')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('a7', 'a6'))
 # print(board.make_move('a4', 'a5'))
 # print(board.make_move('b7', 'b6'))
 # print(board.make_move('a5', 'b6'))
 
-# # # Submission Test #4
-# print('SUB TEST 4')
+# # # Submission Test #4 - Pawn captures pawn with explosion removing proper pieces
+# print('SUB TEST 4 \nPawn captures pawn with explosion removing proper pieces')
 # # print(board.make_move('a2', 'a4'))
 # # print(board.make_move('g7', 'g5'))
 # # print(board.make_move('a4', 'a5'))
@@ -506,8 +525,8 @@ class ChessVar:
 # # print(board.make_move('g4', 'g3'))
 # # print(board.make_move('a6', 'b7'))
 # #
-# # # Submission Test #5
-# print('SUB TEST 5')
+# # # Submission Test #5 - Pawn Capture Pawn and Kills King, Game End
+# print('SUB TEST 5 \nPawn Capture Pawn and Kills King, Game End')
 # print('[1] Game State:', board.get_game_state())
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('g7', 'g5'))
@@ -537,8 +556,8 @@ class ChessVar:
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('c5', 'c3'))
 
-# # Submission Test #6
-# print('SUB TEST 6')
+# # Submission Test #6 - Rook + Pawn Movements with Rook Capture
+# print('SUB TEST 6 \nRook + Pawn Movements with Rook Capture')
 # print(board.make_move('a2', 'a4'))
 # print(board.make_move('h7', 'h5'))
 # # White Move
@@ -547,3 +566,42 @@ class ChessVar:
 # # Black Move
 # print(board.make_move('h8', 'f6'))
 # print(board.make_move('h8', 'g6'))
+
+# # Submission Test #7 - Knight Movement
+# print('SUB TEST 7 \nKnight Movement')
+# print(board.make_move('b1', 'c3))
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
+
+# # Submission Test #8 - Bishop Movement with Captures
+# print('SUB TEST 8 \nBishop Movement with Captures')
+# print(board.make_move('d2', 'd4'))
+# print(board.make_move('e7', 'e5'))
+# print(board.make_move('c1', 'a3'))
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
+
+# # Submission Test #9 - Queen Movement with Captures + End of Game
+# print('SUB TEST 9 \nQueen Movement with Captures + End of Game')
+# print(board.make_move('e2', 'e4'))
+# print(board.make_move('d7', 'd5'))
+# print(board.make_move('d1', 'd4'))
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
+
+# Submission Test #10 - King Movement
+# print('SUB TEST 10 \nKing Movement')
+# print(board.make_move('e2', 'e4'))
+# print(board.make_move('e7', 'e5'))
+# print(board.make_move('e1', 'e2'))
+
+
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
+# print(board.make_move())
