@@ -36,6 +36,8 @@ class ChessVar:
         }
         self._turn = True
         self._alph_tuple = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+        self._white_king = 'e1'
+        self._black_king = 'e8'
 
     def get_game_state(self):
         """
@@ -91,7 +93,6 @@ class ChessVar:
             return False
         # If the chess piece is not the current player's:
         elif player_turn not in move_piece:
-            print('HERE')
             return False
         # Can't capture your own piece:
         elif player_turn in place_sq_piece:
@@ -104,29 +105,48 @@ class ChessVar:
         match move_piece[-1]:
             case 'p':
                 print('Pawn')
-                move_valid = self.check_pawn_move(player_turn, init_sq, place_sq)
+                checkmate = self.check_checkmate(self.check_pawn_move, init_sq)
+                if checkmate is False:
+                    move_valid = self.check_pawn_move(init_sq, place_sq)
+                else:
+                    return False
             case 'b':
                 print('Bishop')
-                move_valid = self.check_bishop_move(init_sq, place_sq)
-                pass
+                checkmate = self.check_checkmate(self.check_bishop_move, init_sq)
+                if checkmate is False:
+                    move_valid = self.check_bishop_move(init_sq, place_sq)
+                else:
+                    return False
             case 'r':
                 print('Rook')
-                move_valid = self.check_rook_move(init_sq, place_sq)
+                checkmate = self.check_checkmate(self.check_rook_move, init_sq)
+                if checkmate is False:
+                    move_valid = self.check_rook_move(init_sq, place_sq)
+                else:
+                    return False
                 pass
             case 'n':
                 print('Knight')
                 pass
             case 'q':
                 print('Queen')
-                bishop_pass = self.check_bishop_move(init_sq, place_sq)
-                rook_pass = self.check_rook_move(init_sq, place_sq)
+                checkmate_bishop = self.check_checkmate(self.check_bishop_move, init_sq)
+                checkmate_rook = self.check_checkmate(self.check_rook_move, init_sq)
+                if checkmate_bishop is False and checkmate_rook is False:
+                    bishop_pass = self.check_bishop_move(init_sq, place_sq)
+                    rook_pass = self.check_rook_move(init_sq, place_sq)
 
-                if bishop_pass or rook_pass:
-                    move_valid = True
+                    if bishop_pass or rook_pass:
+                        move_valid = True
+                else:
+                    return False
             case 'g':
                 print('King')
-                move_valid = self.check_king_move(init_sq, place_sq)
-                pass
+                checkmate = self.check_checkmate(self.check_king_move, init_sq)
+                if checkmate is False:
+                    move_valid = self.check_king_move(init_sq, place_sq)
+                else:
+                    return False
             case _:
                 print('No Matching Piece')
                 return False
@@ -213,9 +233,15 @@ class ChessVar:
             self._board[place_row][place_col] = ''
             return
 
+        # Update king position:
+        if 'w-kg' == move_piece:
+            self._white_king = f'{place_col}{place_row}'
+        elif 'b-kg' == move_piece:
+            self._black_king = f'{place_col}{place_row}'
+
+        # Move the piece:
         self._board[init_row][init_col] = ''
         self._board[place_row][place_col] = move_piece
-        return
 
     def get_col_num_helper(self, col):
         """
@@ -286,12 +312,11 @@ class ChessVar:
 
         return exploded_pieces
 
-    def check_pawn_move(self, player_turn, init_sq, place_sq):
+    def check_pawn_move(self, init_sq, place_sq):
         """
         [DONE] - Need to add description
         Pawn moves forward 1, unless 1st move, then can move forward 1 or 2 squares.
         Pawn captures forward 1 diagonally
-        :param player_turn:
         :param init_sq:
         :param place_sq:
         :return:
@@ -308,7 +333,7 @@ class ChessVar:
             col_upper = 8
 
         # If pawn is in initial row, pawn can move 1 or 2 squares:
-        if player_turn == 'w' and init_row == 2:
+        if init_row == 2:
             for row in range(3, 5):
                 for col in range(col_lower, col_upper + 1):
                     # First row, 3 consecutive cols (one on each side of init col):
@@ -341,7 +366,7 @@ class ChessVar:
                               and self._alph_tuple[col] != init_col):
                             return True
             return False
-        if player_turn == 'b' and init_row == 7:
+        if init_row == 7:
             for row in range(5, 7):
                 for col in range(col_lower, col_upper + 1):
                     # First row, 3 consecutive cols (one on each side of init col):
@@ -376,7 +401,7 @@ class ChessVar:
             return False
         # If pawn is not in initial row, pawn can move only 1 square
         else:
-            if player_turn == 'w':
+            if self.get_turn() == 'w':
                 for row in range(init_row + 1, init_row + 2):
                     for col in range(col_lower, col_upper + 1):
                         # First row, 3 consecutive cols (one on each side of init col):
@@ -393,7 +418,7 @@ class ChessVar:
                                   and self._alph_tuple[col] != init_col):
                                 return True
                 return False
-            if player_turn == 'b':
+            if self.get_turn() == 'b':
                 for row in range(init_row - 1, init_row):
                     for col in range(col_lower, col_upper + 1):
                         # First row, 3 consecutive cols (one on each side of init col):
@@ -538,6 +563,9 @@ class ChessVar:
         :param place_sq:
         :return:
         """
+        if next_sq_col == 0 or next_sq_row == 0 or next_sq_col > 7 or 7 < next_sq_row:
+            return False
+
         # Going back in columns + rows:
         if next_sq_col + 1 == init_sq_col:
             if next_sq_row + 1 == init_sq_row:
@@ -589,6 +617,56 @@ class ChessVar:
                     return True
                 # If not at the placement square continue:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
+
+    def check_checkmate(self, check_next_piece_move, piece_pos):
+        no_checkmate = False
+        checkmate = True
+
+        if self.get_turn() == 'w':
+            king_pos = self._white_king
+            king_row = int(king_pos[1])
+            king_col = king_pos[0].lower()
+            king_col_num = self.get_col_num_helper(king_col)
+
+            for row in range(king_row - 1, king_row + 2):
+                if 0 < row < 8:
+                    for col in range(king_col_num - 1, king_col_num + 2):
+                        # If king can move to an empty space or a space with another player's piece
+                        # AND the next move the current players turn is can checkmate
+                        print(f'Col Row: {self._alph_tuple[col]}{row}')
+                        if ((self._board[row][self._alph_tuple[col]] == ''
+                                or self.get_turn() in self._board[row][self._alph_tuple[col]])
+                                and check_next_piece_move(piece_pos, f'{self._alph_tuple[col]}{row}') is False):
+                            return no_checkmate
+            return checkmate
+        else:
+            king_pos = self._black_king
+            king_row = int(king_pos[1])
+            king_col = king_pos[0].lower()
+            king_col_num = self.get_col_num_helper(king_col)
+
+            for row in range(king_row - 1, king_row + 2):
+                if 0 < row < 8:
+                    for col in range(king_col_num - 1, king_col_num + 2):
+                        # If king can move to an empty space or a space with another player's piece
+                        # AND the next move the current players turn is can checkmate
+                        if ((self._board[row][self._alph_tuple[col]] == ''
+                             or self.get_turn() in self._board[row][self._alph_tuple[col]])
+                                and check_next_piece_move(piece_pos, f'{self._alph_tuple[col]}{row}') is False):
+                            return no_checkmate
+            return checkmate
+
+    def get_king_pos(self, player_turn):
+        """
+        [DONE]
+        :param player_turn:
+        :return:
+        """
+        if player_turn == 'w':
+            return self._white_king
+        else:
+            return self._black_king
+
 
 
 # board = ChessVar()
@@ -708,9 +786,13 @@ class ChessVar:
 # print(board.make_move('e2', 'e4'))
 # print(board.make_move('d7', 'd5'))
 # print(board.make_move('d1', 'd4'))
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
+# print(board.make_move('d1', 'g4'))
+# print(board.make_move('d8', 'f6'))
+# print(board.make_move('d8', 'd6'))
+# print(board.make_move('g4', 'c8'))
+# print(board.make_move('d6', 'b4'))
+# print(board.make_move('c8', 'c7'))
+
 
 # # [PASS] Submission Test #10 - King Movement
 # print('SUB TEST 10 - King Movement')
@@ -726,3 +808,5 @@ class ChessVar:
 # # End their test, start of my test for backwards motion
 # print(board.make_move('c7', 'c6'))
 # print(board.make_move('f3', 'e1'))
+# print(board.get_king_pos('w'))
+# print(board.get_king_pos('b'))
