@@ -132,9 +132,13 @@ class ChessVar:
                 print('Queen')
                 checkmate_bishop = self.check_checkmate(self.check_bishop_move, init_sq)
                 checkmate_rook = self.check_checkmate(self.check_rook_move, init_sq)
+                print('QUEEN - Checkmate Bishop:', checkmate_bishop)
+                print('QUEEN - Checkmate Rook:', checkmate_rook)
                 if checkmate_bishop is False and checkmate_rook is False:
                     bishop_pass = self.check_bishop_move(init_sq, place_sq)
                     rook_pass = self.check_rook_move(init_sq, place_sq)
+                    print('QUEEN - Bishop Pass:', bishop_pass)
+                    print('QUEEN - Rook Pass:', rook_pass)
 
                     if bishop_pass or rook_pass:
                         move_valid = True
@@ -512,7 +516,7 @@ class ChessVar:
 
     def check_bishop_move(self, init_sq, place_sq):
         """
-        [DONE]
+        [DONE] Diagonals
         :param init_sq:
         :param place_sq:
         :return:
@@ -524,6 +528,9 @@ class ChessVar:
         place_row = int(place_sq[1])
         place_col = place_sq[0].lower()
         place_col_num = self.get_col_num_helper(place_col)
+
+        print('BISHOP Init Sq:', init_sq)
+        print('BISHOP Place Sq:', place_sq)
 
         # Diagonal Up - Increase Row, Increase Col (Left Up):
         if init_row < place_row:
@@ -559,9 +566,6 @@ class ChessVar:
         :param place_sq:
         :return:
         """
-        if next_sq_col < 0 or next_sq_row < 0 or next_sq_col > 7 or 7 < next_sq_row:
-            return False
-
         # Going back in columns + rows:
         if next_sq_col + 1 == init_sq_col:
             if next_sq_row + 1 == init_sq_row:
@@ -572,6 +576,8 @@ class ChessVar:
                 # If at the placement square, return True:
                 elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
                     return True
+                elif next_sq_col - 1 < 0 or next_sq_row - 1 < 0:
+                    return False
                 # If not at the placement square continue:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1, place_sq)
 
@@ -584,6 +590,8 @@ class ChessVar:
                 # If at the placement square, return True:
                 elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
                     return True
+                elif next_sq_col - 1 < 0 or next_sq_row + 1 > 8:
+                    return False
                 # If not at the placement square continue:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1, place_sq)
 
@@ -598,6 +606,8 @@ class ChessVar:
                 # If at the placement square, return True:
                 elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
                     return True
+                elif next_sq_row - 1 < 0 or next_sq_col + 1 > 7:
+                    return False
                 # If not at the placement square continue:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1, place_sq)
 
@@ -611,6 +621,8 @@ class ChessVar:
                 # If at the placement square, return True:
                 elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
                     return True
+                elif next_sq_col + 1 > 7 or 8 < next_sq_row + 1:
+                    return False
                 # If not at the placement square continue:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
 
@@ -621,13 +633,13 @@ class ChessVar:
         if self.get_turn() == 'w':
             king_pos = self._black_king
 
-            if check_next_piece_move(piece_pos, king_pos):
+            if check_next_piece_move(piece_pos, king_pos) is True:
                 return checkmate
             else:
                 return no_checkmate
         else:
             king_pos = self._white_king
-            if check_next_piece_move(piece_pos, king_pos):
+            if check_next_piece_move(piece_pos, king_pos) is True:
                 return checkmate
             else:
                 return no_checkmate
