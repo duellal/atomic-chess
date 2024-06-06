@@ -76,6 +76,9 @@ class ChessVar:
             - ex: g5
         :return: boolean
         """
+        print('Init_sq given:', init_sq)
+        print('Place_sq given:', place_sq)
+
         move_piece = self.get_piece(init_sq)
         place_sq_piece = self.get_piece(place_sq)
         player_turn = self.get_turn()
@@ -451,7 +454,7 @@ class ChessVar:
 
         # Going horizontally (columns):
         if init_row == place_row:
-            if place_col_num > init_col_num >= 0:
+            if init_col_num < place_col_num:
                 for col in range(init_col_num + 1, place_col_num + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -459,7 +462,7 @@ class ChessVar:
                         return False
                 return True
 
-            if 8 >= init_col_num > place_col_num:
+            if init_col_num > place_col_num:
                 for col in range(place_col_num, init_col_num):
                     # If there is a piece in the way of the placement square:
                     if (self._board[init_row][self._alph_tuple[col]] != ''
@@ -471,14 +474,14 @@ class ChessVar:
             return False
         # Going vertically (rows):
         elif init_col == place_col:
-            if 0 <= init_row < place_row:
+            if init_row < place_row:
                 for row in range(init_row + 1, place_row + 1):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][init_col] != ''
                             and f'{self._alph_tuple[init_col_num]}{row}' != place_sq):
                         return False
                 return True
-            elif 8 >= init_row > place_row:
+            elif init_row > place_row:
                 for row in range(place_row, init_row):
                     # If there is a piece in the way of the placement square:
                     if (self._board[row][self._alph_tuple[init_col_num]] != ''
@@ -684,13 +687,13 @@ class ChessVar:
 # # [PASS] Submission Test #4 - Pawn captures pawn with explosion removing proper pieces
 # print('SUB TEST 4 - Pawn captures pawn with explosion removing proper pieces')
 # print('---------------------------------------------------------------------')
-# # print(board.make_move('a2', 'a4'))
-# # print(board.make_move('g7', 'g5'))
-# # print(board.make_move('a4', 'a5'))
-# # print(board.make_move('g5', 'g4'))
-# # print(board.make_move('a5', 'a6'))
-# # print(board.make_move('g4', 'g3'))
-# # print(board.make_move('a6', 'b7'))
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('g7', 'g5'))
+# print(board.make_move('a4', 'a5'))
+# print(board.make_move('g5', 'g4'))
+# print(board.make_move('a5', 'a6'))
+# print(board.make_move('g4', 'g3'))
+# print(board.make_move('a6', 'b7'))
 # #
 # # [PASS] Submission Test #5 - Pawn Capture Pawn and Kills King, Game End
 # print('SUB TEST 5 - Pawn Capture Pawn and Kills King, Game End')
@@ -725,7 +728,7 @@ class ChessVar:
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('c5', 'c3'))
 #
-# # [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
+# [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
 # print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
 # print('----------------------------------------------------')
 # print(board.make_move('a2', 'a4'))
