@@ -79,6 +79,19 @@ class ChessVar:
         print('Init_sq given:', init_sq)
         print('Place_sq given:', place_sq)
 
+        init_col = init_sq[0].lower()
+        init_col_num = self.get_col_num_helper(init_col)
+        init_row = int(init_sq[1])
+
+        place_col = place_sq[0].lower()
+        place_col_num = self.get_col_num_helper(place_col)
+        place_row = int(place_sq[1])
+
+        if 0 < init_col_num > 8 or 0 < place_col_num > 8:
+            return False
+        elif 0 < init_row > 8 or 0 < place_row > 8:
+            return False
+
         move_piece = self.get_piece(init_sq)
         place_sq_piece = self.get_piece(place_sq)
         player_turn = self.get_turn()
@@ -651,7 +664,7 @@ class ChessVar:
             return self._black_king
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -729,16 +742,17 @@ class ChessVar:
 # print(board.make_move('c5', 'c3'))
 #
 # [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
-# print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
-# print('----------------------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('h7', 'h5'))
-# # White Move
-# print(board.make_move('a1', 'a5'))
-# print(board.make_move('a1', 'a3'))
-# # Black Move
-# print(board.make_move('h8', 'f6'))
-# print(board.make_move('h8', 'g6'))
+print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
+print('----------------------------------------------------')
+print(board.make_move('a2', 'a4'))
+print(board.make_move('h7', 'h5'))
+# White Move
+print(board.make_move('a1', 'a5'))
+print(board.make_move('a1', 'a3'))
+# Black Move
+print(board.make_move('h8', 'f6'))
+print(board.make_move('h8', 'g6'))
+print(board.make_move('h8', 'h9'))
 #
 # # [] Submission Test #7 - Knight Movement
 # print('SUB TEST 7 - Knight Movement')
