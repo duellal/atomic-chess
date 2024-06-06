@@ -664,7 +664,7 @@ class ChessVar:
             return self._black_king
 
 
-board = ChessVar()
+# board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -742,17 +742,17 @@ board = ChessVar()
 # print(board.make_move('c5', 'c3'))
 #
 # [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
-print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
-print('----------------------------------------------------')
-print(board.make_move('a2', 'a4'))
-print(board.make_move('h7', 'h5'))
-# White Move
-print(board.make_move('a1', 'a5'))
-print(board.make_move('a1', 'a3'))
-# Black Move
-print(board.make_move('h8', 'f6'))
-print(board.make_move('h8', 'g6'))
-print(board.make_move('h8', 'h9'))
+# print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
+# print('----------------------------------------------------')
+# print(board.make_move('a2', 'a4'))
+# print(board.make_move('h7', 'h5'))
+# # White Move
+# print(board.make_move('a1', 'a5'))
+# print(board.make_move('a1', 'a3'))
+# # Black Move
+# print(board.make_move('h8', 'f6'))
+# print(board.make_move('h8', 'g6'))
+# print(board.make_move('h8', 'h9'))
 #
 # # [] Submission Test #7 - Knight Movement
 # print('SUB TEST 7 - Knight Movement')
