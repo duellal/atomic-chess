@@ -189,9 +189,43 @@ class ChessVar:
         Prints the current state of the board.
         :return: dictionary of dictionaries
         """
-        board_rows = []
+        board_rows = [['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']]
+        # Adding the unicode chess pieces to the board_rows list to print out a board with chess piece images instead
+        # of acronyms
         for row in range(1, len(self._board) + 1):
-            print(f'{row}: {self._board[row]}')
+            row_arr = []
+            for col in self._board[row]:
+                match self._board[row][col]:
+                    case "w-p":
+                        row_arr.append('\u2659')
+                    case "w-r":
+                        row_arr.append('\u2656')
+                    case "w-b":
+                        row_arr.append('\u2657')
+                    case "w-kn":
+                        row_arr.append('\u2658')
+                    case "w-q":
+                        row_arr.append('\u2655')
+                    case "w-kg":
+                        row_arr.append('\u2654')
+                    case "b-p":
+                        row_arr.append('\u265F')
+                    case "b-r":
+                        row_arr.append('\u265C')
+                    case "b-b":
+                        row_arr.append('\u265D')
+                    case "b-kn":
+                        row_arr.append('\u265E')
+                    case "b-q":
+                        row_arr.append('\u265B')
+                    case "b-kg":
+                        row_arr.append('\u265A')
+                    case _:
+                        row_arr.append('')
+            board_rows.append(row_arr)
+
+        for row in range(0, len(board_rows)):
+            print(f'{row}: {board_rows[row]}')
 
     def set_turn(self):
         """
@@ -525,6 +559,9 @@ class ChessVar:
                     return True
         return False
 
+    def check_knight_move(self, init_sq, place_sq):
+        pass
+
     def check_bishop_move(self, init_sq, place_sq):
         """
         [DONE] Diagonals
@@ -687,7 +724,7 @@ class ChessVar:
 # print(board.make_move('a6', 'a6'))
 # print(board.make_move('a6', 'a7'))
 # print(board.make_move('b7', 'b6'))
-#
+# #
 # # [PASS] Submission Test #3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion
 # print('SUB TEST 3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion')
 # print('----------------------------------------------------------------------')
