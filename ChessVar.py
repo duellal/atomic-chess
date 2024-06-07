@@ -3,22 +3,6 @@
 # Date:
 # Description: Creates a ChessVar class with methods to play a game of atomic chess.
 
-class Player:
-    """
-    Initializes a player for the atomic chess game. The player must pick a color between white and black. Both
-    players cannot be the same color in order to play against each other.
-    """
-
-    def __init__(self, color):
-        self._color = color
-
-    def get_color(self):
-        """
-        Gets the player’s chess piece color.
-        :return: string - color
-        """
-        return self._color
-
 
 class ChessVar:
     def __init__(self):
@@ -68,6 +52,7 @@ class ChessVar:
 
     def make_move(self, init_sq, place_sq):
         """
+        [Poss Not Done]
         Makes indicated move for the chess piece as long as the game has not already been won, it's the player's
         chess piece whose turn it currently is, and the move is legal.
         :param init_sq: string - column and row acronym for the chess piece to move
@@ -362,7 +347,7 @@ class ChessVar:
 
     def check_pawn_move(self, init_sq, place_sq):
         """
-        [DONE] - Need to add description
+        [DONE] - Need to add description (below is just pawn movement for reference)
         Pawn moves forward 1, unless 1st move, then can move forward 1 or 2 squares.
         Pawn captures forward 1 diagonally
         :param init_sq:
@@ -487,6 +472,7 @@ class ChessVar:
 
     def check_rook_move(self, init_sq, place_sq):
         """
+        [DONE] - Need description, below is just reference of piece move
         Rook moves forward or back in any direction any number of squares.
         Cannot jump pieces - has to stop at end of board or at another piece
         :param init_sq:
@@ -562,7 +548,19 @@ class ChessVar:
         return False
 
     def check_knight_move(self, init_sq, place_sq):
-        pass
+        """
+        []
+        :param init_sq:
+        :param place_sq:
+        :return:
+        """
+        init_row = int(init_sq[1])
+        init_col = init_sq[0].lower()
+        init_col_num = self.get_col_num_helper(init_col)
+
+        place_row = int(place_sq[1])
+        place_col = place_sq[0].lower()
+        place_col_num = self.get_col_num_helper(place_col)
 
     def check_bishop_move(self, init_sq, place_sq):
         """
@@ -674,6 +672,12 @@ class ChessVar:
                 return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
 
     def check_checkmate(self, check_next_piece_move, piece_pos):
+        """
+        [DONE]
+        :param check_next_piece_move:
+        :param piece_pos:
+        :return:
+        """
         no_checkmate = False
         checkmate = True
 
@@ -703,7 +707,7 @@ class ChessVar:
             return self._black_king
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -794,9 +798,9 @@ class ChessVar:
 # print(board.make_move('h8', 'h9'))
 #
 # # [] Submission Test #7 - Knight Movement
-# print('SUB TEST 7 - Knight Movement')
-# print('----------------------------')
-# print(board.make_move('b1', 'c3))
+print('SUB TEST 7 - Knight Movement')
+print('----------------------------')
+print(board.make_move('b1', 'c3'))
 # print(board.make_move())
 # print(board.make_move())
 # print(board.make_move())
