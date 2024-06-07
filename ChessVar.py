@@ -221,7 +221,7 @@ class ChessVar:
                     case "b-kg":
                         row_arr.append('\u265A')
                     case _:
-                        row_arr.append('')
+                        row_arr.append(' ')
             board_rows.append(row_arr)
 
         for row in range(0, len(board_rows)):
@@ -701,12 +701,12 @@ class ChessVar:
             return self._black_king
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
 # print(board.get_turn())
-# board.print_board()
+board.print_board()
 # print('Get Piece on Board:', board.get_piece('C8'))
 
 # board.print_board()
