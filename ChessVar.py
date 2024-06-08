@@ -11,10 +11,9 @@ class ChessVar:
             Public Methods:
                 - get_game_state, make_move, print_board, get_turn
             Private Methods:
-                - get_piece, set_game_state, move_piece, set_turn, remove_pieces_around_explosion, get_col_num_helper,
-                check_pawn_move,
-                check_knight_move, check_bishop_move, bishop_recursion_helper, check_king_move, check_rook_move,
-                check_checkmate, and get_king_pos
+                - get_piece, set_game_state, move_piece, set_turn, remove_pieces_around_explosion,
+                get_col_num_helper, check_pawn_move, check_knight_move, check_bishop_move, bishop_recursion_helper,
+                check_king_move, check_rook_move, check_checkmate, and get_king_pos
     """
     def __init__(self):
         self._all_game_states = ['UNFINISHED', 'WHITE_WON', 'BLACK_WON']
@@ -166,7 +165,6 @@ class ChessVar:
                 move_valid = self.__check_king_move(init_sq, place_sq)
             # No matching pieces to the indicated piece/square is an empty string
             case _:
-                print('No Matching Piece')
                 return False
 
         # If move is legal:
@@ -671,7 +669,8 @@ class ChessVar:
                 elif next_sq_col - 1 < 0 or next_sq_row - 1 < 0:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1,
+                                                      place_sq)
 
         # Going back in columns, going forward in rows:
             elif init_sq_row == next_sq_row - 1:
@@ -685,7 +684,8 @@ class ChessVar:
                 elif next_sq_col - 1 < 0 or next_sq_row + 1 > 8:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1,
+                                                      place_sq)
 
         # Going forward in columns, going backward in rows:
         if init_sq_col == next_sq_col - 1:
@@ -701,7 +701,8 @@ class ChessVar:
                 elif next_sq_row - 1 < 0 or next_sq_col + 1 > 7:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1,
+                                                      place_sq)
 
         # Going forward in both columns and rows:
             elif init_sq_row == next_sq_row - 1:
@@ -716,7 +717,8 @@ class ChessVar:
                 elif next_sq_col + 1 > 7 or 8 < next_sq_row + 1:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1,
+                                                      place_sq)
 
     def __check_checkmate(self, check_next_piece_move, piece_pos):
         """
