@@ -576,13 +576,17 @@ class ChessVar:
             # Left + Right Col:
             if abs(init_col_num - place_col_num) == 1:
                 return True
+            else:
+                return False
 
         # Left + Right: col either + 2 or -2 and row +- 1
         # Left + Right Col:
-        if abs(init_col_num - place_col_num) == 2:
+        elif abs(init_col_num - place_col_num) == 2:
             # Top + Bottom Row
             if abs(init_row - place_row) == 1:
                 return True
+            else:
+                return False
         else:
             return False
 
@@ -731,7 +735,7 @@ class ChessVar:
             return self._black_king
 
 
-# board = ChessVar()
+board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -822,9 +826,11 @@ class ChessVar:
 # print(board.make_move('h8', 'h9'))
 #
 # # [] Submission Test #7 - Knight Movement
-# print('SUB TEST 7 - Knight Movement')
-# print('----------------------------')
-# print(board.make_move('b1', 'c3'))
+print('SUB TEST 7 - Knight Movement')
+print('----------------------------')
+print(board.make_move('b1', 'c3'))
+print(board.make_move('g8', 'h6'))
+print(board.make_move('c3', 'a5'))
 #
 # print('MY KNIGHT TEST')
 # print('----------------------------')
