@@ -1,10 +1,21 @@
 # Author: Alexandria Duell
 # GitHub username: duellal
 # Date:
-# Description: Creates a ChessVar class with methods to play a game of atomic chess.
+# Description: Creates a ChessVar class with methods to play a game of atomic chess. The ChessVar class keeps track
+# of the player whose turn it is and the game state.
 
 
 class ChessVar:
+    """
+        Initiates the ChessVar class. The ChessVar class has the following methods:
+            Public Methods:
+                - get_game_state, make_move, print_board, get_turn
+            Private Methods:
+                - get_piece, set_game_state, move_piece, set_turn, remove_pieces_around_explosion, get_col_num_helper,
+                check_pawn_move,
+                check_knight_move, check_bishop_move, bishop_recursion_helper, check_king_move, check_rook_move,
+                check_checkmate, and get_king_pos
+    """
     def __init__(self):
         self._all_game_states = ['UNFINISHED', 'WHITE_WON', 'BLACK_WON']
         self._game_state = self._all_game_states[0]
@@ -25,17 +36,17 @@ class ChessVar:
 
     def get_game_state(self):
         """
-        [DONE]
         Gets the current game state from three options: UNFINISHED, WHITE_WON, or BLACK_WON.
         :return: string
         """
         return self._game_state
 
-    def set_game_state(self, player_won):
+    def __set_game_state(self, player_won):
         """
-        [DONE]
-        :param player_won:
-        :return:
+        Set the game state using one of the three options: UNFINISHED, WHITE_WON, or BLACK_WON. This is a private
+        method.
+        :param player_won: string - 'w' or 'b' denoting which player won the game
+        :return: None
         """
         # White wins:
         if player_won == 'w':
@@ -52,41 +63,44 @@ class ChessVar:
 
     def make_move(self, init_sq, place_sq):
         """
-        [Poss Not Done]
-        Makes indicated move for the chess piece as long as the game has not already been won, it's the player's
-        chess piece whose turn it currently is, and the move is legal.
+        Makes indicated move for the chess piece as long as the following conditions are met:
+            - the game has not already been won
+            - the initial chess piece to move is the player's chess piece whose turn it currently is
+            - the move is legal for that particular piece
+            - the move does not go off the board
+
+        If a move can be made the following happens:
+            - the chess piece is moved to the indicated square
+            - if there is a captured piece, remove any other exploded pieces from the board
+            - update the game state if a player has won
+            - return True
+
+        If a move cannot be made, the method returns False.
+
         :param init_sq: string - column and row acronym for the chess piece to move
             - ex: b2
         :param place_sq: string - column and row acronym for the placement of the chess piece.
             - ex: g5
         :return: boolean
         """
-        print('Init_sq given:', init_sq)
-        print('Place_sq given:', place_sq)
-
         init_col = init_sq[0].lower()
-        init_col_num = self.get_col_num_helper(init_col)
+        init_col_num = self.__get_col_num_helper(init_col)
         init_row = int(init_sq[1])
 
         place_col = place_sq[0].lower()
-        place_col_num = self.get_col_num_helper(place_col)
+        place_col_num = self.__get_col_num_helper(place_col)
         place_row = int(place_sq[1])
 
+        # If the indicated move is off of the board:
         if 0 < init_col_num > 8 or 0 < place_col_num > 8:
             return False
         elif 0 < init_row > 8 or 0 < place_row > 8:
             return False
 
-        move_piece = self.get_piece(init_sq)
-        place_sq_piece = self.get_piece(place_sq)
+        move_piece = self.__get_piece(init_sq)
+        place_sq_piece = self.__get_piece(place_sq)
         player_turn = self.get_turn()
         move_valid = False
-
-        print('Player Turn:', player_turn)
-        print('Move piece:', move_piece)
-        print('Init Square:', init_sq)
-        print('Place Square:', place_sq)
-        print('Place Piece:', place_sq_piece)
 
         # Cases to return false:
         # If the square is empty:
@@ -104,79 +118,78 @@ class ChessVar:
 
         # If no case for the piece return false, else continue to see if move is legal:
         match move_piece[-1]:
+            # Pawn
             case 'p':
-                print('Pawn')
-                checkmate = self.check_checkmate(self.check_pawn_move, init_sq)
+                checkmate = self.__check_checkmate(self.__check_pawn_move, init_sq)
                 if checkmate is False:
-                    move_valid = self.check_pawn_move(init_sq, place_sq)
+                    move_valid = self.__check_pawn_move(init_sq, place_sq)
                 else:
                     return False
+            # Bishop
             case 'b':
-                print('Bishop')
-                checkmate = self.check_checkmate(self.check_bishop_move, init_sq)
+                checkmate = self.__check_checkmate(self.__check_bishop_move, init_sq)
                 if checkmate is False:
-                    move_valid = self.check_bishop_move(init_sq, place_sq)
+                    move_valid = self.__check_bishop_move(init_sq, place_sq)
                 else:
                     return False
+            # Rook
             case 'r':
-                print('Rook')
-                checkmate = self.check_checkmate(self.check_rook_move, init_sq)
+                checkmate = self.__check_checkmate(self.__check_rook_move, init_sq)
                 if checkmate is False:
-                    move_valid = self.check_rook_move(init_sq, place_sq)
+                    move_valid = self.__check_rook_move(init_sq, place_sq)
                 else:
                     return False
                 pass
+            # Knight
             case 'n':
-                print('Knight')
-                checkmate = self.check_checkmate(self.check_knight_move, init_sq)
+                checkmate = self.__check_checkmate(self.__check_knight_move, init_sq)
                 if checkmate is False:
-                    move_valid = self.check_knight_move(init_sq, place_sq)
+                    move_valid = self.__check_knight_move(init_sq, place_sq)
                 else:
                     return False
+            # Queen
+                # Uses bishop + rook movements
             case 'q':
-                print('Queen')
-                checkmate_bishop = self.check_checkmate(self.check_bishop_move, init_sq)
-                checkmate_rook = self.check_checkmate(self.check_rook_move, init_sq)
+                checkmate_bishop = self.__check_checkmate(self.__check_bishop_move, init_sq)
+                checkmate_rook = self.__check_checkmate(self.__check_rook_move, init_sq)
+
                 if checkmate_bishop is False and checkmate_rook is False:
-                    bishop_pass = self.check_bishop_move(init_sq, place_sq)
-                    rook_pass = self.check_rook_move(init_sq, place_sq)
+                    bishop_pass = self.__check_bishop_move(init_sq, place_sq)
+                    rook_pass = self.__check_rook_move(init_sq, place_sq)
 
                     if bishop_pass or rook_pass:
                         move_valid = True
                 else:
                     return False
+            # King
             case 'g':
-                print('King')
-                move_valid = self.check_king_move(init_sq, place_sq)
+                move_valid = self.__check_king_move(init_sq, place_sq)
+            # No matching pieces to the indicated piece/square is an empty string
             case _:
                 print('No Matching Piece')
                 return False
 
         # If move is legal:
-        #   Remove exploded + captured pieces
-        #   Move the initial piece to the placement square
-        #   Set the turn as the next player's
-        #   Return Boolean
+            # Remove exploded + captured pieces
+            # Move the initial piece to the placement square
+            # Set the turn as the next player's
+            # Return Boolean (move_valid)
         if move_valid:
             explosion = None
             if move_valid and place_sq_piece:
-                explosion = self.remove_pieces_around_explosion(place_sq)
+                explosion = self.__remove_pieces_around_explosion(place_sq)
 
-            self.move_piece(move_piece, explosion, init_sq, place_sq)
-            self.set_turn()
-            print('Turn Success Board:')
-            self.print_board()
+            self.__move_piece(move_piece, explosion, init_sq, place_sq)
+            self.__set_turn()
             return move_valid
         # Return false if move is not legal:
-        print('Turn Fail Board:')
-        self.print_board()
         return move_valid
 
     def print_board(self):
         """
-        [DONE]
-        Prints the current state of the board.
-        :return: dictionary of dictionaries
+        Prints the current state of the board changing out the acronyms for unicode chess pieces.
+        :return: printed rows of lists that are numbered from 9 to 1 (as per the README.md board looks; 9 being the
+        columns)
         """
         board_rows = []
         # Adding the unicode chess pieces to the board_rows list to print out a board with chess piece images instead
@@ -222,45 +235,51 @@ class ChessVar:
                 print(f'{board_row}: {board_rows[row]}')
             board_row -= 1
 
-    def set_turn(self):
+    def __set_turn(self):
         """
-        [DONE]
-        Changes the turn after a player has made a legal move, if they can.
+        If a player makes a legal move, the method changes the turn. If the move is not legal, the turn stays the
+        same. This method is private.
         :return: None
         """
         self._turn = not self._turn
 
     def get_turn(self):
         """
-        [DONE]
-        Gets the current player's turn by their color acronym.
-        :return: boolean
+        Gets the current player's turn by their color acronym ('w' or 'b').
+        :return: string
         """
         if self._turn:
             return 'w'
         return 'b'
 
-    def get_piece(self, pos):
+    def __get_piece(self, pos):
         """
-        [DONE]
-        Gets the piece on the board if there is one at the given location.
-        :param pos: string - denotes location on chess board; ex: "C4" or "c4"
+        Gets the piece on the board if there is one at the given location. This is a private method.
+        :param pos: string - denotes the algebraic notation of the chess board square
+            - ex: "C4" or "c4"
         :return: None or string
-            - String: the piece acronym at that location or ''
+            - String: the piece acronym at that location or an empty string
+                - ex: 'w-p' or ''
         """
         p_row = int(pos[1])
         p_col = pos[0].lower()
         # Actual square at position:
         return self._board[p_row][p_col]
 
-    def move_piece(self, move_piece, explosion, init_sq, place_sq):
+    def __move_piece(self, move_piece, explosion, init_sq, place_sq):
         """
-        [DONE]
-        :param explosion:
+        Changes the location of a chess piece and updates the board accordingly. If a pawn causes the explosion,
+        this method makes sure the pawn causing the explosion + the captured pawn are both taken off the board (unlike
+        other pawns around the explosion). It updates the kings' location (used in get_king_pos for keeping track of
+        the kings for other methods).
+
+        This is a private method.
+
         :param move_piece:
-        :param init_sq:
-        :param place_sq:
-        :return:
+        :param explosion:
+        :param init_sq: string - algebraic notation of the initial square a piece should be at
+        :param place_sq: string - algebraic notation of the placement square a piece should move to
+        :return: None
         """
         init_col = init_sq[0].lower()
         init_row = int(init_sq[1])
@@ -284,18 +303,18 @@ class ChessVar:
         self._board[init_row][init_col] = ''
         self._board[place_row][place_col] = move_piece
 
-    def get_col_num_helper(self, col):
+    def __get_col_num_helper(self, col):
         """
-        [DONE]
-        :param col:
-        :return:
+        Helper function to get the index number of the column letter.
+        :param col: string - column letter
+        :return: integer - column index
         """
-        # Get the column number as its index (will need in below for loop):
+        # Get the column number as its index (will need in below methods):
         for index, letter in enumerate(self._alph_tuple):
             if letter == col:
                 return index
 
-    def remove_pieces_around_explosion(self, cap_pos):
+    def __remove_pieces_around_explosion(self, cap_pos):
         """
         [DONE]
         :param cap_pos:
@@ -303,7 +322,7 @@ class ChessVar:
         """
         cap_col = cap_pos[0].lower()
         # Get the column number as its index (will need in below for loop):
-        cap_col_num = self.get_col_num_helper(cap_col)
+        cap_col_num = self.__get_col_num_helper(cap_col)
         cap_row = int(cap_pos[1])
         exploded_pieces = []
         count_kings = 0
@@ -344,16 +363,16 @@ class ChessVar:
             elif 'kg' in self._board[sq_row][sq_col]:
                 # If white king is captured, black wins:
                 if 'w' in self._board[sq_row][sq_col]:
-                    return self.set_game_state('b')
+                    return self.__set_game_state('b')
                 # If black king is captured, white wins:
                 if 'b' in self._board[sq_row][sq_col]:
-                    return self.set_game_state('w')
+                    return self.__set_game_state('w')
             # Remove all other pieces:
             self._board[sq_row][sq_col] = ''
 
         return exploded_pieces
 
-    def check_pawn_move(self, init_sq, place_sq):
+    def __check_pawn_move(self, init_sq, place_sq):
         """
         [DONE] - Need to add description (below is just pawn movement for reference)
         Pawn moves forward 1, unless 1st move, then can move forward 1 or 2 squares.
@@ -364,7 +383,7 @@ class ChessVar:
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
-        init_col_num = self.get_col_num_helper(init_col)
+        init_col_num = self.__get_col_num_helper(init_col)
         col_lower = init_col_num - 2
         col_upper = init_col_num + 2
         # Makes sure that columns for the loops cannot go off or go to the other side of the board:
@@ -478,7 +497,7 @@ class ChessVar:
                 return False
         return False
 
-    def check_rook_move(self, init_sq, place_sq):
+    def __check_rook_move(self, init_sq, place_sq):
         """
         [DONE] - Need description, below is just reference of piece move
         Rook moves forward or back in any direction any number of squares.
@@ -489,11 +508,11 @@ class ChessVar:
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
-        init_col_num = self.get_col_num_helper(init_col)
+        init_col_num = self.__get_col_num_helper(init_col)
 
         place_row = int(place_sq[1])
         place_col = place_sq[0].lower()
-        place_col_num = self.get_col_num_helper(place_col)
+        place_col_num = self.__get_col_num_helper(place_col)
 
         # Going horizontally (columns):
         if init_row == place_row:
@@ -538,7 +557,7 @@ class ChessVar:
         else:
             return False
 
-    def check_king_move(self, init_sq, place_sq):
+    def __check_king_move(self, init_sq, place_sq):
         """
         [DONE]
         :param init_sq:
@@ -547,7 +566,7 @@ class ChessVar:
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
-        init_col_num = self.get_col_num_helper(init_col)
+        init_col_num = self.__get_col_num_helper(init_col)
 
         for row in range(init_row - 1, init_row + 2):
             for col in range(init_col_num - 1, init_col_num + 2):
@@ -555,7 +574,7 @@ class ChessVar:
                     return True
         return False
 
-    def check_knight_move(self, init_sq, place_sq):
+    def __check_knight_move(self, init_sq, place_sq):
         """
         []
         :param init_sq:
@@ -564,11 +583,11 @@ class ChessVar:
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
-        init_col_num = self.get_col_num_helper(init_col)
+        init_col_num = self.__get_col_num_helper(init_col)
 
         place_row = int(place_sq[1])
         place_col = place_sq[0].lower()
-        place_col_num = self.get_col_num_helper(place_col)
+        place_col_num = self.__get_col_num_helper(place_col)
 
         # Top + Bottom: col +- 1 and row either + 2 or -2
         # Top + Bottom Row:
@@ -590,7 +609,7 @@ class ChessVar:
         else:
             return False
 
-    def check_bishop_move(self, init_sq, place_sq):
+    def __check_bishop_move(self, init_sq, place_sq):
         """
         [DONE] Diagonals
         :param init_sq:
@@ -599,19 +618,19 @@ class ChessVar:
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
-        init_col_num = self.get_col_num_helper(init_col)
+        init_col_num = self.__get_col_num_helper(init_col)
 
         place_row = int(place_sq[1])
         place_col = place_sq[0].lower()
-        place_col_num = self.get_col_num_helper(place_col)
+        place_col_num = self.__get_col_num_helper(place_col)
 
         # Diagonal Up - Increase Row, Increase Col (Left Up):
         if init_row < place_row:
             if init_col_num < place_col_num:
-                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row + 1, place_sq)
+                return self.__bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row + 1, place_sq)
             # Increase Row, Decrease Col (Right Up):
             elif init_col_num > place_col_num:
-                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row + 1, place_sq)
+                return self.__bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row + 1, place_sq)
             # Col is the same:
             else:
                 return False
@@ -619,17 +638,17 @@ class ChessVar:
         # Diagonal Down - Decrease row, Decrease Col (Left Down):
         elif init_row > place_row:
             if init_col_num < place_col_num:
-                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row - 1, place_sq)
+                return self.__bishop_recursion_helper(init_col_num, init_row, init_col_num + 1, init_row - 1, place_sq)
             # Decrease Row, Increase Col (Right Down):
             elif init_col_num > place_col_num:
-                return self.bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row - 1, place_sq)
+                return self.__bishop_recursion_helper(init_col_num, init_row, init_col_num - 1, init_row - 1, place_sq)
             # Col is the same:
             else:
                 return False
         # Row is the same as the initial square:
         return False
 
-    def bishop_recursion_helper(self, init_sq_col, init_sq_row, next_sq_col, next_sq_row, place_sq):
+    def __bishop_recursion_helper(self, init_sq_col, init_sq_row, next_sq_col, next_sq_row, place_sq):
         """
         [DONE]
         :param init_sq_col:
@@ -652,7 +671,7 @@ class ChessVar:
                 elif next_sq_col - 1 < 0 or next_sq_row - 1 < 0:
                     return False
                 # If not at the placement square continue:
-                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1, place_sq)
 
         # Going back in columns, going forward in rows:
             elif init_sq_row == next_sq_row - 1:
@@ -666,7 +685,7 @@ class ChessVar:
                 elif next_sq_col - 1 < 0 or next_sq_row + 1 > 8:
                     return False
                 # If not at the placement square continue:
-                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1, place_sq)
 
         # Going forward in columns, going backward in rows:
         if init_sq_col == next_sq_col - 1:
@@ -682,7 +701,7 @@ class ChessVar:
                 elif next_sq_row - 1 < 0 or next_sq_col + 1 > 7:
                     return False
                 # If not at the placement square continue:
-                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1, place_sq)
 
         # Going forward in both columns and rows:
             elif init_sq_row == next_sq_row - 1:
@@ -697,9 +716,9 @@ class ChessVar:
                 elif next_sq_col + 1 > 7 or 8 < next_sq_row + 1:
                     return False
                 # If not at the placement square continue:
-                return self.bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
+                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1, place_sq)
 
-    def check_checkmate(self, check_next_piece_move, piece_pos):
+    def __check_checkmate(self, check_next_piece_move, piece_pos):
         """
         [DONE]
         :param check_next_piece_move:
@@ -723,7 +742,7 @@ class ChessVar:
             else:
                 return no_checkmate
 
-    def get_king_pos(self, player_turn):
+    def __get_king_pos(self, player_turn):
         """
         [DONE]
         :param player_turn:
@@ -733,158 +752,3 @@ class ChessVar:
             return self._white_king
         else:
             return self._black_king
-
-
-# board = ChessVar()
-# print(board.get_turn())
-# print(board.set_turn())
-# print(board.get_game_state())
-# print(board.get_turn())
-# board.print_board()
-# print('Get Piece on Board:', board.get_piece('C8'))
-
-# board.print_board()
-
-# # [PASS] Submission Test #1 - Create game, test pawn moves, game state + turns
-#
-# # [PASS] Submission Test #2 - Pawn Moves Without Capture
-# print('SUB TEST 2 - Pawn Moves Without Capture')
-# print('---------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('a7', 'a6'))
-# print(board.make_move('a4', 'a5'))
-# print(board.make_move('a6', 'a5'))
-# print(board.make_move('a6', 'b5'))
-# print(board.make_move('a6', 'a6'))
-# print(board.make_move('a6', 'a7'))
-# print(board.make_move('b7', 'b6'))
-# #
-# # [PASS] Submission Test #3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion
-# print('SUB TEST 3 - Pawn Captures Pawn, No Other Pieces Affected By Explosion')
-# print('----------------------------------------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('a7', 'a6'))
-# print(board.make_move('a4', 'a5'))
-# print(board.make_move('b7', 'b6'))
-# print(board.make_move('a5', 'b6'))
-#
-# # [PASS] Submission Test #4 - Pawn captures pawn with explosion removing proper pieces
-# print('SUB TEST 4 - Pawn captures pawn with explosion removing proper pieces')
-# print('---------------------------------------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('g7', 'g5'))
-# print(board.make_move('a4', 'a5'))
-# print(board.make_move('g5', 'g4'))
-# print(board.make_move('a5', 'a6'))
-# print(board.make_move('g4', 'g3'))
-# print(board.make_move('a6', 'b7'))
-# #
-# # [PASS] Submission Test #5 - Pawn Capture Pawn and Kills King, Game End
-# print('SUB TEST 5 - Pawn Capture Pawn and Kills King, Game End')
-# print('-------------------------------------------------------')
-# print('[1] Game State:', board.get_game_state())
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('g7', 'g5'))
-# print(board.make_move('a4', 'a5'))
-# print(board.make_move('g5', 'g4'))
-# print(board.make_move('a5', 'a6'))
-# print('[2] Game State:', board.get_game_state())
-# print(board.make_move('g4', 'g3'))
-# print('[3] Game State:', board.get_game_state())
-# print(board.make_move('a6', 'b7'))
-# print('[4] Game State:', board.get_game_state())
-# print(board.make_move('g3', 'f2'))
-# print('[5] Game State:', board.get_game_state())
-#
-# # [PASS] My Test for Rook:
-# print('MY TEST ROOK')
-# print('------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('h7', 'h5'))
-# print(board.make_move('a1', 'a3'))
-# print(board.make_move('f7', 'f6'))
-# print('PLayer turn:', board.get_turn())
-# print(board.make_move('a3', 'e3'))
-# print(board.make_move('f6', 'f5'))
-# print(board.make_move('e3', 'e5'))
-# print(board.make_move('f5', 'f4'))
-# print(board.make_move('e5', 'c5'))
-# print(board.make_move('g7', 'g5'))
-# print(board.make_move('c5', 'c3'))
-#
-# [PASS] Submission Test #6 - Rook + Pawn Movements with Rook Capture
-# print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
-# print('----------------------------------------------------')
-# print(board.make_move('a2', 'a4'))
-# print(board.make_move('h7', 'h5'))
-# # White Move
-# print(board.make_move('a1', 'a5'))
-# print(board.make_move('a1', 'a3'))
-# # Black Move
-# print(board.make_move('h8', 'f6'))
-# print(board.make_move('h8', 'g6'))
-# print(board.make_move('h8', 'h9'))
-#
-# # [] Submission Test #7 - Knight Movement
-# print('SUB TEST 7 - Knight Movement')
-# print('----------------------------')
-# print(board.make_move('b1', 'c3'))
-# print(board.make_move('g8', 'h6'))
-# print(board.make_move('c3', 'a5'))
-# #
-# print('MY KNIGHT TEST')
-# print('----------------------------')
-# print(board.make_move('b1', 'c3'))
-# print(board.make_move('b8', 'a6'))
-# print(board.make_move('c3', 'd6'))
-# print(board.make_move('c3', 'a4'))
-# print(board.make_move('a6', 'b4'))
-# print(board.make_move('a4', 'c3'))
-# print(board.make_move('b4', 'e5'))
-# print(board.make_move('b4', 'a2'))
-# print(board.make_move('c3', 'a2'))
-#
-# # [DONE] Submission Test #8 - Bishop Movement with Captures
-# print('SUB TEST 8 - Bishop Movement with Captures')
-# print('------------------------------------------')
-# print(board.make_move('d2', 'd4'))
-# print(board.make_move('e7', 'e5'))
-# print(board.make_move('c1', 'a3'))
-# print(board.make_move('c1', 'h6'))  # RU
-# print(board.make_move('f8', 'c5'))  # LD
-# print(board.make_move('h6', 'g7'))  # LU
-# print(board.make_move('c5', 'd4'))  # RD
-
-#
-# # [DONE] Submission Test #9 - Queen Movement with Captures + End of Game
-# print('SUB TEST 9 - Queen Movement with Captures + End of Game')
-# print('-------------------------------------------------------')
-# print(board.make_move('e2', 'e4'))
-# print(board.make_move('d7', 'd5'))
-# print(board.make_move('d1', 'd4'))
-# print(board.make_move('d1', 'g4'))
-# print(board.make_move('d8', 'f6'))
-# print(board.make_move('d8', 'd6'))
-# print(board.make_move('g4', 'c8'))
-# print(board.make_move('d6', 'b4'))
-# print(board.make_move('c8', 'c7'))
-# print(board.make_move('f2', 'f3'))
-# print(board.make_move('b4', 'd2'))
-
-
-# # [PASS] Submission Test #10 - King Movement
-# print('SUB TEST 10 - King Movement')
-# print('---------------------------')
-# print(board.make_move('e2', 'e4'))
-# print(board.make_move('e7', 'e5'))
-# print(board.make_move('e1', 'e3'))
-# print(board.make_move('e1', 'f1'))
-# print(board.make_move('e1', 'e2'))
-# print(board.make_move('e8', 'd7'))
-# print(board.make_move('e8', 'e7'))
-# print(board.make_move('e2', 'f3'))
-# # End their test, start of my test for backwards motion
-# print(board.make_move('c7', 'c6'))
-# print(board.make_move('f3', 'e1'))
-# print(board.get_king_pos('w'))
-# print(board.get_king_pos('b'))
