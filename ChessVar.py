@@ -7,13 +7,13 @@
 
 class ChessVar:
     """
-        Initiates the ChessVar class. The ChessVar class has the following methods:
-            Public Methods:
-                - get_game_state, make_move, print_board, get_turn
-            Private Methods:
-                - get_piece, set_game_state, move_piece, set_turn, remove_pieces_around_explosion,
-                get_col_num_helper, check_pawn_move, check_knight_move, check_bishop_move, bishop_recursion_helper,
-                check_king_move, check_rook_move, check_checkmate, and get_king_pos
+    Initiates the ChessVar class. The ChessVar class has the following methods:
+        Public Methods:
+            - get_game_state, make_move, print_board, get_turn
+        Private Methods:
+            - get_piece, set_game_state, move_piece, set_turn, remove_pieces_around_explosion, get_col_num_helper,
+            check_pawn_move, check_knight_move, check_bishop_move, bishop_recursion_helper, check_king_move,
+            check_rook_move, check_checkmate, and get_king_pos
     """
     def __init__(self):
         self._all_game_states = ['UNFINISHED', 'WHITE_WON', 'BLACK_WON']
@@ -314,9 +314,18 @@ class ChessVar:
 
     def __remove_pieces_around_explosion(self, cap_pos):
         """
-        [DONE]
-        :param cap_pos:
-        :return:
+        Once the make_move method has gone past checking if a piece can make a valid move, it will call this method
+        if there is another piece on the placement square, and will execute the explosion.
+
+        This explosion method checks to see if any piece around the capture is a pawn; if the piece is not a pawn,
+        it adds it to the explosion pieces and if it is, it does not add it. This method checks if both kings
+        are removed from the board, and returns False if true. If the other player's king is captured or exploded in
+        the move, this method sets the game state to the player who has won.
+
+        This method is private.
+
+        :param cap_pos: string - algebraic notation of the captured piece's position
+        :return: False or an array of exploded pieces around the capture
         """
         cap_col = cap_pos[0].lower()
         # Get the column number as its index (will need in below for loop):
@@ -372,23 +381,31 @@ class ChessVar:
 
     def __check_pawn_move(self, init_sq, place_sq):
         """
-        [DONE] - Need to add description (below is just pawn movement for reference)
-        Pawn moves forward 1, unless 1st move, then can move forward 1 or 2 squares.
-        Pawn captures forward 1 diagonally
-        :param init_sq:
-        :param place_sq:
-        :return:
+        This method checks if the pawn can make a legal move or not.
+
+        It checks if the pawn is in the first position for the players whose piece it is, and allows the pawn to move
+        forward 1 or 2 squares on that initial starting square. If the piece is not on the starting square,
+        it allows the pawn to move only 1 square forward. If the pawn is capturing another piece, the method checks
+        that the capture is diagonally by 1 square.
+
+        This method is private and returns a boolean if the pawn can make the indicated move.
+
+        :param init_sq: string - algebraic notation of the initial square a piece should be at
+        :param place_sq: string - algebraic notation of the placement square a piece should move to
+        :return: Boolean
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
         init_col_num = self.__get_col_num_helper(init_col)
         col_lower = init_col_num - 2
         col_upper = init_col_num + 2
-        # Makes sure that columns for the loops cannot go off or go to the other side of the board:
-        if col_lower < -1:
-            col_lower = -1
-        if col_upper > 8:
-            col_upper = 8
+
+        # # NOT NEEDED ANYMORE?!?
+        # # Makes sure that columns for the loops cannot go off or go to the other side of the board:
+        # if col_lower < -1:
+        #     col_lower = -1
+        # if col_upper > 8:
+        #     col_upper = 8
 
         # If pawn is in initial row, pawn can move 1 or 2 squares:
         if init_row == 2:
@@ -497,12 +514,16 @@ class ChessVar:
 
     def __check_rook_move(self, init_sq, place_sq):
         """
-        [DONE] - Need description, below is just reference of piece move
-        Rook moves forward or back in any direction any number of squares.
-        Cannot jump pieces - has to stop at end of board or at another piece
-        :param init_sq:
-        :param place_sq:
-        :return:
+        This method checks if the rook can make a legal move or not.
+
+        It checks if the direction the rook is being placed at is either forward, backward, or side to side and if
+        there is an obstruction to the placement square, as the rook cannot move with pieces in the way.
+
+        This method is private and returns a boolean if the rook can make the indicated move.
+
+        :param init_sq: string - algebraic notation of the initial square a piece should be at
+        :param place_sq: string - algebraic notation of the placement square a piece should move to
+        :return: Boolean
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
@@ -557,10 +578,16 @@ class ChessVar:
 
     def __check_king_move(self, init_sq, place_sq):
         """
-        [DONE]
-        :param init_sq:
-        :param place_sq:
-        :return:
+        This method checks if the king can make a legal move or not.
+
+        It checks if the direction the king is being placed is 1 square in any direction around it and if
+        there is an obstruction to the placement square, as the king cannot move with pieces in the way.
+
+        This method is private and returns a boolean if the king can make the indicated move.
+
+        :param init_sq: string - algebraic notation of the initial square a piece should be at
+        :param place_sq: string - algebraic notation of the placement square a piece should move to
+        :return: Boolean
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
@@ -583,10 +610,16 @@ class ChessVar:
 
     def __check_knight_move(self, init_sq, place_sq):
         """
-        []
-        :param init_sq:
-        :param place_sq:
-        :return:
+        This method checks if the knight can make a legal move or not.
+
+        It checks if the direction the knight is being placed at is in a "L" shape from it's starting square. The
+        knight can move past other pieces on the board, and it is not checked in this method.
+
+        This method is private and returns a boolean if the knight can make the indicated move.
+
+        :param init_sq: string - algebraic notation of the initial square a piece should be at
+        :param place_sq: string - algebraic notation of the placement square a piece should move to
+        :return: Boolean
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
@@ -618,10 +651,16 @@ class ChessVar:
 
     def __check_bishop_move(self, init_sq, place_sq):
         """
-        [DONE] Diagonals
-        :param init_sq:
-        :param place_sq:
-        :return:
+        This method checks if the bishop can make a legal move or not.
+
+        It checks if the direction the bishop is being placed at is in a diagonal and if
+        there is an obstruction to the placement square, as the bishop cannot move with pieces in the way.
+
+        This method is private and returns a boolean if the bishop can make the indicated move.
+
+        :param init_sq: string - algebraic notation of the initial square a piece should be at
+        :param place_sq: string - algebraic notation of the placement square a piece should move to
+        :return: Boolean
         """
         init_row = int(init_sq[1])
         init_col = init_sq[0].lower()
@@ -655,86 +694,92 @@ class ChessVar:
         # Row is the same as the initial square:
         return False
 
-    def __bishop_recursion_helper(self, init_sq_col, init_sq_row, next_sq_col, next_sq_row, place_sq):
+    def __bishop_recursion_helper(self, init_sq_col_num, init_sq_row, next_sq_col_num, next_sq_row, place_sq):
         """
-        [DONE]
-        :param init_sq_col:
-        :param init_sq_row:
-        :param next_sq_col:
-        :param next_sq_row:
-        :param place_sq:
-        :return:
+        This method is a helper function to check if the bishop can go to the placement square or not.
+
+        :param init_sq_col_num: integer - the index integer associated with the column letter of the initial square
+        :param init_sq_row: integer - the index integer associated with the initial square's row :param
+        next_sq_col_num:integer - the index integer associated with the column letter of the next square being
+        evaluated
+        :param next_sq_row: integer - the index integer associated with the next square's row that is being
+        evaluated
+        :param place_sq: string - algebraic notation associated with the placement square of the move
+        :return: boolean or recurs the method
         """
         # Going back in columns + rows:
-        if next_sq_col + 1 == init_sq_col:
+        if next_sq_col_num + 1 == init_sq_col_num:
             if next_sq_row + 1 == init_sq_row:
                 # If there is a piece in the way of the placement square:
-                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
-                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq):
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col_num]] != ''
+                        and f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' != place_sq):
                     return False
                 # If at the placement square, return True:
-                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                elif f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' == place_sq:
                     return True
-                elif next_sq_col - 1 < 0 or next_sq_row - 1 < 0:
+                elif next_sq_col_num - 1 < 0 or next_sq_row - 1 < 0:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row - 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num - 1, next_sq_row - 1,
                                                       place_sq)
 
         # Going back in columns, going forward in rows:
             elif init_sq_row == next_sq_row - 1:
                 # If there is a piece in the way of the placement square:
-                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
-                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq):
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col_num]] != ''
+                        and f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' != place_sq):
                     return False
                 # If at the placement square, return True:
-                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                elif f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' == place_sq:
                     return True
-                elif next_sq_col - 1 < 0 or next_sq_row + 1 > 8:
+                elif next_sq_col_num - 1 < 0 or next_sq_row + 1 > 8:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col - 1, next_sq_row + 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num - 1, next_sq_row + 1,
                                                       place_sq)
 
         # Going forward in columns, going backward in rows:
-        if init_sq_col == next_sq_col - 1:
+        if init_sq_col_num == next_sq_col_num - 1:
             if next_sq_row + 1 == init_sq_row:
                 # If there is a piece in the way of the placement square:
-                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
-                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col_num]] != ''
+                        and f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' != place_sq
                 ):
                     return False
                 # If at the placement square, return True:
-                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                elif f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' == place_sq:
                     return True
-                elif next_sq_row - 1 < 0 or next_sq_col + 1 > 7:
+                elif next_sq_row - 1 < 0 or next_sq_col_num + 1 > 7:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row - 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num + 1, next_sq_row - 1,
                                                       place_sq)
 
         # Going forward in both columns and rows:
             elif init_sq_row == next_sq_row - 1:
                 # If there is a piece in the way of the placement square:
-                if (self._board[next_sq_row][self._alph_tuple[next_sq_col]] != ''
-                        and f'{self._alph_tuple[next_sq_col]}{next_sq_row}' != place_sq
+                if (self._board[next_sq_row][self._alph_tuple[next_sq_col_num]] != ''
+                        and f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' != place_sq
                 ):
                     return False
                 # If at the placement square, return True:
-                elif f'{self._alph_tuple[next_sq_col]}{next_sq_row}' == place_sq:
+                elif f'{self._alph_tuple[next_sq_col_num]}{next_sq_row}' == place_sq:
                     return True
-                elif next_sq_col + 1 > 7 or 8 < next_sq_row + 1:
+                elif next_sq_col_num + 1 > 7 or 8 < next_sq_row + 1:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col, next_sq_row, next_sq_col + 1, next_sq_row + 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num + 1, next_sq_row + 1,
                                                       place_sq)
 
     def __check_checkmate(self, check_next_piece_move, piece_pos):
         """
-        [DONE]
-        :param check_next_piece_move:
-        :param piece_pos:
-        :return:
+        Checks if the piece's next move will capture the king.
+
+        This is a private method.
+
+        :param check_next_piece_move: private method for the piece being checked
+        :param piece_pos: string - algebraic notation for the position of the piece being checked
+        :return: Boolean
         """
         no_checkmate = False
         checkmate = True
@@ -755,9 +800,12 @@ class ChessVar:
 
     def __get_king_pos(self, player_turn):
         """
-        [DONE]
-        :param player_turn:
-        :return:
+        Gets the current king's position for the current player.
+
+        This is a private method.
+
+        :param player_turn: string - 'w' or 'b'
+        :return: string - algebraic notation of the current player's king.
         """
         if player_turn == 'w':
             return self._white_king
