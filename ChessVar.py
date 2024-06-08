@@ -213,10 +213,11 @@ class ChessVar:
                         row_arr.append(' ')
             board_rows.append(row_arr)
 
+        col_alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         board_row = 9
         for row in reversed(range(0, len(board_rows) + 1)):
             if board_row == 9:
-                print(f'{board_row}: {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']}')
+                print(f'{board_row}: {col_alph}')
             else:
                 print(f'{board_row}: {board_rows[row]}')
             board_row -= 1
