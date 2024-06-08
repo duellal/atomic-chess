@@ -566,10 +566,19 @@ class ChessVar:
         init_col = init_sq[0].lower()
         init_col_num = self.__get_col_num_helper(init_col)
 
+        place_row = int(place_sq[1])
+        place_col = place_sq[0].lower()
+
+        # King cannot capture other pieces
+        if self._board[place_row][place_col] != '':
+            return False
+
+        # If placement square is within 1 square reach of the king:
         for row in range(init_row - 1, init_row + 2):
             for col in range(init_col_num - 1, init_col_num + 2):
                 if place_sq == f'{self._alph_tuple[col]}{row}':
                     return True
+        # Else return False (catch all)
         return False
 
     def __check_knight_move(self, init_sq, place_sq):
