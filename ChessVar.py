@@ -400,12 +400,11 @@ class ChessVar:
         col_lower = init_col_num - 2
         col_upper = init_col_num + 2
 
-        # # NOT NEEDED ANYMORE?!?
-        # # Makes sure that columns for the loops cannot go off or go to the other side of the board:
-        # if col_lower < -1:
-        #     col_lower = -1
-        # if col_upper > 8:
-        #     col_upper = 8
+        # Makes sure that columns for the loops cannot go off or go to the other side of the board:
+        if col_lower < -1:
+            col_lower = -1
+        if col_upper > 8:
+            col_upper = 8
 
         # If pawn is in initial row, pawn can move 1 or 2 squares:
         if init_row == 2:
