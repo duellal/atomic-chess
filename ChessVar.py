@@ -128,7 +128,11 @@ class ChessVar:
                 pass
             case 'n':
                 print('Knight')
-                pass
+                checkmate = self.check_checkmate(self.check_knight_move, init_sq)
+                if checkmate is False:
+                    move_valid = self.check_knight_move(init_sq, place_sq)
+                else:
+                    return False
             case 'q':
                 print('Queen')
                 checkmate_bishop = self.check_checkmate(self.check_bishop_move, init_sq)
@@ -174,7 +178,7 @@ class ChessVar:
         Prints the current state of the board.
         :return: dictionary of dictionaries
         """
-        board_rows = [['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']]
+        board_rows = []
         # Adding the unicode chess pieces to the board_rows list to print out a board with chess piece images instead
         # of acronyms
         for row in range(1, len(self._board) + 1):
@@ -210,8 +214,11 @@ class ChessVar:
             board_rows.append(row_arr)
 
         board_row = 9
-        for row in range(0, len(board_rows)):
-            print(f'{board_row}: {board_rows[row]}')
+        for row in reversed(range(0, len(board_rows) + 1)):
+            if board_row == 9:
+                print(f'{board_row}: {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']}')
+            else:
+                print(f'{board_row}: {board_rows[row]}')
             board_row -= 1
 
     def set_turn(self):
@@ -562,6 +569,22 @@ class ChessVar:
         place_col = place_sq[0].lower()
         place_col_num = self.get_col_num_helper(place_col)
 
+        # Top + Bottom: col +- 1 and row either + 2 or -2
+        # Top + Bottom Row:
+        if abs(init_row - place_row) == 2:
+            # Left + Right Col:
+            if abs(init_col_num - place_col_num) == 1:
+                return True
+
+        # Left + Right: col either + 2 or -2 and row +- 1
+        # Left + Right Col:
+        if abs(init_col_num - place_col_num) == 2:
+            # Top + Bottom Row
+            if abs(init_row - place_row) == 1:
+                return True
+        else:
+            return False
+
     def check_bishop_move(self, init_sq, place_sq):
         """
         [DONE] Diagonals
@@ -707,7 +730,7 @@ class ChessVar:
             return self._black_king
 
 
-board = ChessVar()
+# board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -784,7 +807,7 @@ board = ChessVar()
 # print(board.make_move('g7', 'g5'))
 # print(board.make_move('c5', 'c3'))
 #
-# [FAIL] Submission Test #6 - Rook + Pawn Movements with Rook Capture
+# [PASS] Submission Test #6 - Rook + Pawn Movements with Rook Capture
 # print('SUB TEST 6 - Rook + Pawn Movements with Rook Capture')
 # print('----------------------------------------------------')
 # print(board.make_move('a2', 'a4'))
@@ -798,14 +821,21 @@ board = ChessVar()
 # print(board.make_move('h8', 'h9'))
 #
 # # [] Submission Test #7 - Knight Movement
-print('SUB TEST 7 - Knight Movement')
-print('----------------------------')
-print(board.make_move('b1', 'c3'))
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
-# print(board.make_move())
+# print('SUB TEST 7 - Knight Movement')
+# print('----------------------------')
+# print(board.make_move('b1', 'c3'))
+#
+# print('MY KNIGHT TEST')
+# print('----------------------------')
+# print(board.make_move('b1', 'c3'))
+# print(board.make_move('b8', 'a6'))
+# print(board.make_move('c3', 'd6'))
+# print(board.make_move('c3', 'a4'))
+# print(board.make_move('a6', 'b4'))
+# print(board.make_move('a4', 'c3'))
+# print(board.make_move('b4', 'e5'))
+# print(board.make_move('b4', 'a2'))
+# print(board.make_move('c3', 'a2'))
 #
 # # [DONE] Submission Test #8 - Bishop Movement with Captures
 # print('SUB TEST 8 - Bishop Movement with Captures')
