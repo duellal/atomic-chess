@@ -735,7 +735,7 @@ class ChessVar:
             return self._black_king
 
 
-board = ChessVar()
+# board = ChessVar()
 # print(board.get_turn())
 # print(board.set_turn())
 # print(board.get_game_state())
@@ -826,12 +826,12 @@ board = ChessVar()
 # print(board.make_move('h8', 'h9'))
 #
 # # [] Submission Test #7 - Knight Movement
-print('SUB TEST 7 - Knight Movement')
-print('----------------------------')
-print(board.make_move('b1', 'c3'))
-print(board.make_move('g8', 'h6'))
-print(board.make_move('c3', 'a5'))
-#
+# print('SUB TEST 7 - Knight Movement')
+# print('----------------------------')
+# print(board.make_move('b1', 'c3'))
+# print(board.make_move('g8', 'h6'))
+# print(board.make_move('c3', 'a5'))
+# #
 # print('MY KNIGHT TEST')
 # print('----------------------------')
 # print(board.make_move('b1', 'c3'))
