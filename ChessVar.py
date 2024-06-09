@@ -642,7 +642,6 @@ class ChessVar:
         place_col = place_sq[0].lower()
         place_col_num = self.__get_col_num_helper(place_col)
 
-        # Top + Bottom: col +- 1 and row either + 2 or -2
         # Top + Bottom Row:
         if abs(init_row - place_row) == 2:
             # Left + Right Col:
@@ -651,7 +650,6 @@ class ChessVar:
             else:
                 return False
 
-        # Left + Right: col either + 2 or -2 and row +- 1
         # Left + Right Col:
         elif abs(init_col_num - place_col_num) == 2:
             # Top + Bottom Row
@@ -817,9 +815,7 @@ class ChessVar:
 
     def __get_king_pos(self, player_turn):
         """
-        Gets the current king's position for the current player.
-
-        This is a private method.
+        Gets the current king's position for the current player. This is a private method.
 
         :param player_turn: string - 'w' or 'b'
         :return: string - algebraic notation of the current player's king.
