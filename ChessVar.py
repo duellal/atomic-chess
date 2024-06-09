@@ -9,11 +9,14 @@ class ChessVar:
     """
     Initiates the ChessVar class. The ChessVar class has the following methods:
         Public Methods:
-            - get_game_state, get_piece, make_move, print_board, get_turn
+            - get_game_state, get_piece, make_move, print_board, get_turn, reset_game
         Private Methods:
-            - set_game_state, move_piece, set_turn, remove_pieces_around_explosion, get_col_num_helper,
+            - set_game_state, move_piece, remove_pieces_around_explosion, get_col_num_helper,
             check_pawn_move, check_knight_move, check_bishop_move, bishop_recursion_helper, check_king_move,
             check_rook_move, check_checkmate, and get_king_pos
+        Methods for testing:
+            - reset_knight_test, reset_rook_test, reset_bishop_test, reset_queen_test, reset_king_test, set_turn (is
+            also used in the class as a private method)
     """
 
     def __init__(self):
