@@ -1,6 +1,6 @@
 # Author: Alexandria Duell
 # GitHub username: duellal
-# Date:
+# Date: 6/8/24
 # Description: Creates a ChessVar class with methods to play a game of atomic chess. The ChessVar class keeps track
 # of the player whose turn it is and the game state.
 
@@ -9,12 +9,13 @@ class ChessVar:
     """
     Initiates the ChessVar class. The ChessVar class has the following methods:
         Public Methods:
-            - get_game_state, make_move, print_board, get_turn
+            - get_game_state, get_piece, make_move, print_board, get_turn
         Private Methods:
-            - get_piece, set_game_state, move_piece, set_turn, remove_pieces_around_explosion, get_col_num_helper,
+            - set_game_state, move_piece, set_turn, remove_pieces_around_explosion, get_col_num_helper,
             check_pawn_move, check_knight_move, check_bishop_move, bishop_recursion_helper, check_king_move,
             check_rook_move, check_checkmate, and get_king_pos
     """
+
     def __init__(self):
         self._all_game_states = ['UNFINISHED', 'WHITE_WON', 'BLACK_WON']
         self._game_state = self._all_game_states[0]
@@ -90,14 +91,23 @@ class ChessVar:
         place_col_num = self.__get_col_num_helper(place_col)
         place_row = int(place_sq[1])
 
+        # If the row number or column number is not an integer:
+        if (isinstance(init_col_num, int) and
+                isinstance(place_col_num, int) and
+                isinstance(init_row, int) and
+                isinstance(place_row, int)):
+            pass
+        else:
+            return False
+
         # If the indicated move is off of the board:
         if 0 < init_col_num > 8 or 0 < place_col_num > 8:
             return False
         elif 0 < init_row > 8 or 0 < place_row > 8:
             return False
 
-        move_piece = self.__get_piece(init_sq)
-        place_sq_piece = self.__get_piece(place_sq)
+        move_piece = self.get_piece(init_sq)
+        place_sq_piece = self.get_piece(place_sq)
         player_turn = self.get_turn()
         move_valid = False
 
@@ -147,7 +157,7 @@ class ChessVar:
                 else:
                     return False
             # Queen
-                # Uses bishop + rook movements
+            # Uses bishop + rook movements
             case 'q':
                 checkmate_bishop = self.__check_checkmate(self.__check_bishop_move, init_sq)
                 checkmate_rook = self.__check_checkmate(self.__check_rook_move, init_sq)
@@ -168,17 +178,17 @@ class ChessVar:
                 return False
 
         # If move is legal:
-            # Remove exploded + captured pieces
-            # Move the initial piece to the placement square
-            # Set the turn as the next player's
-            # Return Boolean (move_valid)
+        # Remove exploded + captured pieces
+        # Move the initial piece to the placement square
+        # Set the turn as the next player's
+        # Return Boolean (move_valid)
         if move_valid:
             explosion = None
             if move_valid and place_sq_piece:
                 explosion = self.__remove_pieces_around_explosion(place_sq)
 
             self.__move_piece(move_piece, explosion, init_sq, place_sq)
-            self.__set_turn()
+            self.set_turn()
             return move_valid
         # Return false if move is not legal:
         return move_valid
@@ -233,7 +243,7 @@ class ChessVar:
                 print(f'{board_row}: {board_rows[row]}')
             board_row -= 1
 
-    def __set_turn(self):
+    def set_turn(self):
         """
         If a player makes a legal move, the method changes the turn. If the move is not legal, the turn stays the
         same. This method is private.
@@ -250,9 +260,10 @@ class ChessVar:
             return 'w'
         return 'b'
 
-    def __get_piece(self, pos):
+    def get_piece(self, pos):
         """
-        Gets the piece on the board if there is one at the given location. This is a private method.
+        Gets the piece on the board if there is one at the given location. This is not a private method in order to
+        test, otherwise it would be.
         :param pos: string - denotes the algebraic notation of the chess board square
             - ex: "C4" or "c4"
         :return: None or string
@@ -370,10 +381,10 @@ class ChessVar:
             elif 'kg' in self._board[sq_row][sq_col]:
                 # If white king is captured, black wins:
                 if 'w' in self._board[sq_row][sq_col]:
-                    return self.__set_game_state('b')
+                    self.__set_game_state('b')
                 # If black king is captured, white wins:
                 if 'b' in self._board[sq_row][sq_col]:
-                    return self.__set_game_state('w')
+                    self.__set_game_state('w')
             # Remove all other pieces:
             self._board[sq_row][sq_col] = ''
 
@@ -719,10 +730,11 @@ class ChessVar:
                 elif next_sq_col_num - 1 < 0 or next_sq_row - 1 < 0:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num - 1, next_sq_row - 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num - 1,
+                                                      next_sq_row - 1,
                                                       place_sq)
 
-        # Going back in columns, going forward in rows:
+            # Going back in columns, going forward in rows:
             elif init_sq_row == next_sq_row - 1:
                 # If there is a piece in the way of the placement square:
                 if (self._board[next_sq_row][self._alph_tuple[next_sq_col_num]] != ''
@@ -734,7 +746,8 @@ class ChessVar:
                 elif next_sq_col_num - 1 < 0 or next_sq_row + 1 > 8:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num - 1, next_sq_row + 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num - 1,
+                                                      next_sq_row + 1,
                                                       place_sq)
 
         # Going forward in columns, going backward in rows:
@@ -751,10 +764,11 @@ class ChessVar:
                 elif next_sq_row - 1 < 0 or next_sq_col_num + 1 > 7:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num + 1, next_sq_row - 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num + 1,
+                                                      next_sq_row - 1,
                                                       place_sq)
 
-        # Going forward in both columns and rows:
+            # Going forward in both columns and rows:
             elif init_sq_row == next_sq_row - 1:
                 # If there is a piece in the way of the placement square:
                 if (self._board[next_sq_row][self._alph_tuple[next_sq_col_num]] != ''
@@ -767,7 +781,8 @@ class ChessVar:
                 elif next_sq_col_num + 1 > 7 or 8 < next_sq_row + 1:
                     return False
                 # If not at the placement square continue:
-                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num + 1, next_sq_row + 1,
+                return self.__bishop_recursion_helper(next_sq_col_num, next_sq_row, next_sq_col_num + 1,
+                                                      next_sq_row + 1,
                                                       place_sq)
 
     def __check_checkmate(self, check_next_piece_move, piece_pos):
@@ -810,3 +825,128 @@ class ChessVar:
             return self._white_king
         else:
             return self._black_king
+
+    def reset_game(self):
+        """
+        Resets the game when called. Game state, player turn, and game board are all reset to initial instances.
+        :return: None
+        """
+        self._game_state = self._all_game_states[0]
+        self._board = {
+            1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
+            8: {'a': 'b-r', 'b': 'b-kn', 'c': 'b-b', 'd': 'b-q', 'e': 'b-kg', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+        }
+        self._turn = True
+        self._white_king = 'e1'
+        self._black_king = 'e8'
+
+    def reset_knight_test(self):
+        """
+        Resets the game to put the black knight to be in the middle of the board. Every other instance is reset to
+        initial instances. For testing purposes only.
+        :return: None
+        """
+        self._game_state = self._all_game_states[0]
+        self._board = {
+            1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': 'b-kn', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
+            8: {'a': 'b-r', 'b': '', 'c': 'b-b', 'd': 'b-q', 'e': 'b-kg', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+            }
+        self._turn = True
+        self._white_king = 'e1'
+        self._black_king = 'e8'
+
+    def reset_rook_test(self):
+        """
+        Resets the game to put the black rook to be in the middle of the board. Every other instance is reset to
+        initial instances. For testing purposes only.
+        :return: None
+        """
+        self._game_state = self._all_game_states[0]
+        self._board = {
+            1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': '', 'c': '', 'd': 'b-r', 'e': '', 'f': '', 'g': '', 'h': ''},
+            6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
+            8: {'a': '', 'b': 'b-kn', 'c': 'b-b', 'd': 'b-q', 'e': 'b-kg', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+            }
+        self._turn = True
+        self._white_king = 'e1'
+        self._black_king = 'e8'
+
+    def reset_bishop_test(self):
+        """
+        Resets the game to put the black bishop to be in the middle of the board. Every other instance is reset to
+        initial instances. For testing purposes only.
+        :return: None
+        """
+        self._game_state = self._all_game_states[0]
+        self._board = {
+            1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': '', 'c': '', 'd': 'b-b', 'e': '', 'f': '', 'g': '', 'h': ''},
+            6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
+            8: {'a': 'b-r', 'b': 'b-kn', 'c': '', 'd': 'b-q', 'e': 'b-kg', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+            }
+        self._turn = True
+        self._white_king = 'e1'
+        self._black_king = 'e8'
+
+    def reset_queen_test(self):
+        """
+        Resets the game to put the black queen to be in the middle of the board. Every other instance is reset to
+        initial instances. For testing purposes only.
+        :return: None
+        """
+        self._game_state = self._all_game_states[0]
+        self._board = {
+            1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': '', 'c': '', 'd': 'b-q', 'e': '', 'f': '', 'g': '', 'h': ''},
+            6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
+            8: {'a': 'b-r', 'b': 'b-kn', 'c': 'b-b', 'd': '', 'e': 'b-kg', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+            }
+        self._turn = True
+        self._white_king = 'e1'
+        self._black_king = 'e8'
+
+    def reset_king_test(self):
+        """
+        Resets the game to put the black king to be in the middle of the board. Every other instance is reset to
+        initial instances. For testing purposes only.
+        :return: None
+        """
+        self._game_state = self._all_game_states[0]
+        self._board = {
+            1: {'a': 'w-r', 'b': 'w-kn', 'c': 'w-b', 'd': 'w-q', 'e': 'w-kg', 'f': 'w-b', 'g': 'w-kn', 'h': 'w-r'},
+            2: {'a': 'w-p', 'b': 'w-p', 'c': 'w-p', 'd': 'w-p', 'e': 'w-p', 'f': 'w-p', 'g': 'w-p', 'h': 'w-p'},
+            3: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            4: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            5: {'a': '', 'b': '', 'c': '', 'd': 'b-kg', 'e': '', 'f': '', 'g': '', 'h': ''},
+            6: {'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '', 'g': '', 'h': ''},
+            7: {'a': 'b-p', 'b': 'b-p', 'c': 'b-p', 'd': 'b-p', 'e': 'b-p', 'f': 'b-p', 'g': 'b-p', 'h': 'b-p'},
+            8: {'a': 'b-r', 'b': 'b-kn', 'c': 'b-b', 'd': 'b-q', 'e': '', 'f': 'b-b', 'g': 'b-kn', 'h': 'b-r'}
+            }
+        self._turn = True
+        self._white_king = 'e1'
+        self._black_king = 'e8'
