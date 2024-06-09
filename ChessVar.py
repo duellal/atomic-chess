@@ -94,19 +94,17 @@ class ChessVar:
         place_col_num = self.__get_col_num_helper(place_col)
         place_row = int(place_sq[1])
 
-        # If the row number or column number is not an integer:
-        if (isinstance(init_col_num, int) and
-                isinstance(place_col_num, int) and
-                isinstance(init_row, int) and
-                isinstance(place_row, int)):
+        # If the row number or column number is not an integer, return False (not on the board):
+        if (isinstance(init_col_num, int)
+                and isinstance(place_col_num, int)
+                and isinstance(init_row, int)
+                and isinstance(place_row, int)):
             pass
         else:
             return False
 
-        # If the indicated move is off of the board:
-        if 0 < init_col_num > 8 or 0 < place_col_num > 8:
-            return False
-        elif 0 < init_row > 8 or 0 < place_row > 8:
+        # If the indicated move for the rows is off of the board:
+        if 0 < init_row > 8 or 0 < place_row > 8:
             return False
 
         move_piece = self.get_piece(init_sq)
@@ -114,7 +112,7 @@ class ChessVar:
         player_turn = self.get_turn()
         move_valid = False
 
-        # Cases to return false:
+    # Cases to return false:
         # If the square is empty:
         if move_piece == '':
             return False
@@ -160,7 +158,7 @@ class ChessVar:
                 else:
                     return False
             # Queen
-            # Uses bishop + rook movements
+                # Uses bishop + rook movements
             case 'q':
                 checkmate_bishop = self.__check_checkmate(self.__check_bishop_move, init_sq)
                 checkmate_rook = self.__check_checkmate(self.__check_rook_move, init_sq)
@@ -181,10 +179,10 @@ class ChessVar:
                 return False
 
         # If move is legal:
-        # Remove exploded + captured pieces
-        # Move the initial piece to the placement square
-        # Set the turn as the next player's
-        # Return Boolean (move_valid)
+            # Remove exploded + captured pieces
+            # Move the initial piece to the placement square
+            # Set the turn as the next player's
+            # Return Boolean (move_valid)
         if move_valid:
             explosion = None
             if move_valid and place_sq_piece:
