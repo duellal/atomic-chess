@@ -1,7 +1,7 @@
 # Atomic Chess Project
 
 This project was a portfolio project at Oregon State University. It 
-involves creating an [Atomic Chess]((https://www.chess.com/terms/atomic-chess#captures-and-explosions)) program using Pythin classes and logic.
+involves creating an [Atomic Chess](https://www.chess.com/terms/atomic-chess) program using Pythin classes and logic.
 
 ## Instructions 
 
